@@ -7,19 +7,10 @@ import com.google.gson.annotations.SerializedName;
  * Created by hiroshi on 2015/06/09.
  */
 public class User {
-    private String name;
     @SerializedName("url_name")
     private String urlName;
     @SerializedName("profile_image_url")
     private String profileImageUrl;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public String getUrlName() {
         return urlName;

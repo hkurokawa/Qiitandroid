@@ -1,10 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
-    <TextView
-        android:id="@+id/title"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="article"
+            type="com.hkurokawa.qiitandroid.model.Article"/>
+    </data>
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-</LinearLayout>
+        android:layout_height="@dimen/list_item_height"
+        android:paddingTop="16dp">
+
+        <ImageView
+            android:id="@+id/user_icon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginRight="16dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"/>
+
+        <TextView
+            android:id="@+id/info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@id/user_icon"
+            android:textSize="13sp"
+            android:text='@{article.user.urlName + " が" + article.createdAtInWords + "前に投稿しました"}'
+            tools:text="pugiemonn が3分前に投稿しました"/>
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/info"
+            android:layout_toRightOf="@id/user_icon"
+            android:lines="2"
+            android:ellipsize="end"
+            android:textSize="16sp"
+            android:text="@{article.title}"
+            tools:text="perlのコマンドでファイル内の文字列を一括置換しました。"/>
+    </RelativeLayout>
+</layout>

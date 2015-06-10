@@ -11,8 +11,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.hkurokawa.qiitandroid.model.Article;
 import com.hkurokawa.qiitandroid.network.QiitaApiV1;
+import com.hkurokawa.qiitandroid.views.ArticleAdapter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.ButterKnife;
@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
 
         ButterKnife.inject(this);
 
-        this.adapter = new ArrayAdapter<>(this, R.layout.item_article, R.id.title, new ArrayList<Article>());
+        this.adapter = new ArticleAdapter(this);
         this.listView.setAdapter(this.adapter);
 
         this.buildQiitaApiV1().items().subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<List<Article>>() {
