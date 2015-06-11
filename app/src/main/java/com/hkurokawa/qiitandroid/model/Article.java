@@ -10,12 +10,14 @@ import java.util.List;
  * Created by hiroshi on 2015/06/09.
  */
 public class Article {
-    private Number id;
+    private long id;
     private String uuid;
     private User user;
     private String title;
+    @RFC822
     @SerializedName("created_at")
     private Date createdAt;
+    @RFC822
     @SerializedName("updated_at")
     private Date updatedAt;
     @SerializedName("created_at_in_words")
@@ -42,11 +44,11 @@ public class Article {
     @SerializedName("stock_users")
     private List<String> stockUsers;
 
-    public Number getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Number id) {
+    public void setId(long id) {
         this.id = id;
     }
 

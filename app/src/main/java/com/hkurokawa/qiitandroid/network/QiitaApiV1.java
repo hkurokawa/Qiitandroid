@@ -1,9 +1,6 @@
 package com.hkurokawa.qiitandroid.network;
 
-import com.hkurokawa.qiitandroid.model.Article;
-
-import java.util.List;
-
+import retrofit.client.Response;
 import retrofit.http.GET;
 import rx.Observable;
 
@@ -13,5 +10,5 @@ import rx.Observable;
  */
 public interface QiitaApiV1 {
     @GET("/api/v1/items")
-    Observable<List<Article>> items();
+    Observable<Response> items();
 }
