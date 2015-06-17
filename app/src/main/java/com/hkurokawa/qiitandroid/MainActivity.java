@@ -24,6 +24,7 @@ import rx.Observable;
 import rx.Observer;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
@@ -42,36 +43,40 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.inject(this);
 
         this.adapter = new ArticleAdapter(this);
-        this.listView.setAdapter(this.adapter);
-        final Observable<ListView> onBottomObservable = createBottomHitObservable(this.listView);
-        onBottomObservable.flatMap(new Func1<ListView, Observable<?Lt<>>>() {
-            @Override
-            public Observable<?> call(ListView listView) {
-                return null;
-            }
-        });
 
-        final Observable<List<Article>> response = this.buildQiitaApiV1().items().subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread());
-        response.flatMap(new Func1<List<Article>, Observable<Article>>() {
-            @Override
-            public Observable<Article> call(List<Article> response) {
-                return Observable.from(response);
-            }
-        }).subscribe(new Observer<Article>() {
-            @Override
-            public void onCompleted() {
-                Timber.d("Retrofit call for Qiita items completed.");
-                MainActivity.this.adapter.notifyDataSetChanged();
-            }
+        final Observable<ListView> observable = createBottomHitObservable(this.listView);
+        observable.subscribe(new Action1<ListView>() {
+            private int page;
 
             @Override
-            public void onError(Throwable e) {
-                Timber.e(e, "Error while getting a list of Qiita items.");
-            }
+            public void call(ListView listView) {
+                // Query the next page
+                buildQiitaApiV1().items(page)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .flatMap(new Func1<List<Article>, Observable<Article>>() {
+                            @Override
+                            public Observable<Article> call(List<Article> response) {
+                                return Observable.from(response);
+                            }
+                        }).subscribe(new Observer<Article>() {
+                    @Override
+                    public void onCompleted() {
+                        Timber.d("Retrofit call for Qiita items completed.");
+                        MainActivity.this.adapter.notifyDataSetChanged();
+                        page++;
+                    }
 
-            @Override
-            public void onNext(Article article) {
-                MainActivity.this.adapter.add(article);
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e, "Error while getting a list of Qiita items.");
+                    }
+
+                    @Override
+                    public void onNext(Article article) {
+                        MainActivity.this.adapter.add(article);
+                    }
+                });
             }
         });
     }
@@ -113,22 +118,23 @@ public class MainActivity extends AppCompatActivity {
         return Observable.create(new Observable.OnSubscribe<ListView>() {
             @Override
             public void call(final Subscriber<? super ListView> subscriber) {
-               lv.setOnScrollListener(new AbsListView.OnScrollListener() {
-                   private int scrollState;
+                lv.setOnScrollListener(new AbsListView.OnScrollListener() {
+                    private int scrollState;
 
-                   @Override
-                   public void onScrollStateChanged(AbsListView view, int scrollState) {
-                       this.scrollState = scrollState;
-                   }
+                    @Override
+                    public void onScrollStateChanged(AbsListView view, int scrollState) {
+                        this.scrollState = scrollState;
+                    }
 
-                   @Override
-                   public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                       if (!subscriber.isUnsubscribed() && this.scrollState == SCROLL_STATE_IDLE && firstVisibleItem + visibleItemCount >= totalItemCount) {
-                           Timber.d("Emitting an onBottom event.");
-                           subscriber.onNext(lv);
-                       }
-                   }
-               });
+                    @Override
+                    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                        Timber.d("onScroll. firstVisibleItem=%d, visibleItemCount=%d, totalItemCount=%d.", firstVisibleItem, visibleItemCount, totalItemCount);
+                        if (!subscriber.isUnsubscribed() && this.scrollState == SCROLL_STATE_IDLE && firstVisibleItem + visibleItemCount >= totalItemCount) {
+                            Timber.d("Emitting an onBottom event.");
+                            subscriber.onNext(lv);
+                        }
+                    }
+                });
             }
         });
     }
