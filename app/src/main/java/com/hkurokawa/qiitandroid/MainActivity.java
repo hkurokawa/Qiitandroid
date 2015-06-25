@@ -1,6 +1,7 @@
 package com.hkurokawa.qiitandroid;
 
 import android.os.Bundle;
+import android.support.annotation.UiThread;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -43,40 +44,53 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.inject(this);
 
         this.adapter = new ArticleAdapter(this);
+        this.listView.setAdapter(this.adapter);
+    }
 
-        final Observable<ListView> observable = createBottomHitObservable(this.listView);
-        observable.subscribe(new Action1<ListView>() {
-            private int page;
+    @Override
+    protected void onStart() {
+        super.onStart();
+        createBottomHitObservable(this.listView).subscribe(new Action1<ListView>() {
+            private boolean loading;
+            private int page = 1;
 
             @Override
             public void call(ListView listView) {
-                // Query the next page
-                buildQiitaApiV1().items(page)
-                        .subscribeOn(Schedulers.newThread())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .flatMap(new Func1<List<Article>, Observable<Article>>() {
-                            @Override
-                            public Observable<Article> call(List<Article> response) {
-                                return Observable.from(response);
-                            }
-                        }).subscribe(new Observer<Article>() {
-                    @Override
-                    public void onCompleted() {
-                        Timber.d("Retrofit call for Qiita items completed.");
-                        MainActivity.this.adapter.notifyDataSetChanged();
-                        page++;
-                    }
+                if (!this.loading) {
+                    this.loading = true;
+                    // Query the next page
+                    buildQiitaApiV1().items(this.page)
+                            .subscribeOn(Schedulers.newThread())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .flatMap(new Func1<List<Article>, Observable<Article>>() {
+                                @Override
+                                public Observable<Article> call(List<Article> response) {
+                                    return Observable.from(response);
+                                }
+                            }).subscribe(new Observer<Article>() {
+                        @Override
+                        @UiThread
+                        public void onCompleted() {
+                            Timber.d("Retrofit call for Qiita items completed.");
+                            MainActivity.this.adapter.notifyDataSetChanged();
+                            loading = false;
+                            page++;
+                        }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        Timber.e(e, "Error while getting a list of Qiita items.");
-                    }
+                        @Override
+                        @UiThread
+                        public void onError(Throwable e) {
+                            Timber.e(e, "Error while getting a list of Qiita items.");
+                            loading = false;
+                        }
 
-                    @Override
-                    public void onNext(Article article) {
-                        MainActivity.this.adapter.add(article);
-                    }
-                });
+                        @Override
+                        @UiThread
+                        public void onNext(Article article) {
+                            MainActivity.this.adapter.add(article);
+                        }
+                    });
+                }
             }
         });
     }
@@ -128,7 +142,6 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                        Timber.d("onScroll. firstVisibleItem=%d, visibleItemCount=%d, totalItemCount=%d.", firstVisibleItem, visibleItemCount, totalItemCount);
                         if (!subscriber.isUnsubscribed() && this.scrollState == SCROLL_STATE_IDLE && firstVisibleItem + visibleItemCount >= totalItemCount) {
                             Timber.d("Emitting an onBottom event.");
                             subscriber.onNext(lv);
