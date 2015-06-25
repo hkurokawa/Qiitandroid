@@ -8,7 +8,6 @@ import android.widget.ArrayAdapter;
 
 import com.hkurokawa.qiitandroid.databinding.ItemArticleBinding;
 import com.hkurokawa.qiitandroid.model.Article;
-import com.squareup.picasso.Picasso;
 
 /**
  * An ArrayAdapter to display a list of {@link com.hkurokawa.qiitandroid.model.Article}s.
@@ -29,9 +28,8 @@ public class ArticleAdapter extends ArrayAdapter<Article> {
         }
 
         final ItemArticleBinding binding = (ItemArticleBinding) convertView.getTag();
-        Article article = this.getItem(position);
+        final Article article = this.getItem(position);
         binding.setArticle(article);
-        Picasso.with(this.getContext()).load(article.getUser().getProfileImageUrl()).into(binding.userIcon);
         return convertView;
     }
 }
