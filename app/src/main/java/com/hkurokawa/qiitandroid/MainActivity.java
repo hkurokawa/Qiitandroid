@@ -3,11 +3,10 @@ package com.hkurokawa.qiitandroid;
 import android.os.Bundle;
 import android.support.annotation.UiThread;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.AbsListView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -31,9 +30,9 @@ import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity {
-    ArrayAdapter<Article> adapter;
+    private ArticleAdapter adapter;
     @InjectView(R.id.list)
-    ListView listView;
+    RecyclerView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,19 +42,20 @@ public class MainActivity extends AppCompatActivity {
 
         ButterKnife.inject(this);
 
-        this.adapter = new ArticleAdapter(this);
-        this.listView.setAdapter(this.adapter);
-    }
+        this.listView.setHasFixedSize(true);
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        createBottomHitObservable(this.listView).subscribe(new Action1<ListView>() {
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        this.listView.setLayoutManager(layoutManager);
+
+        this.adapter = new ArticleAdapter();
+        this.listView.setAdapter(this.adapter);
+
+        createBottomHitObservable(this.listView, layoutManager).startWith((Void)null).subscribe(new Action1<Void>() {
             private boolean loading;
             private int page = 1;
 
             @Override
-            public void call(ListView listView) {
+            public void call(Void val) {
                 if (!this.loading) {
                     this.loading = true;
                     // Query the next page
@@ -95,6 +95,11 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
     private QiitaApiV1 buildQiitaApiV1() {
         final RestAdapter.Builder builder = new RestAdapter.Builder().setEndpoint("https://qiita.com");
         if (BuildConfig.DEBUG) {
@@ -128,23 +133,27 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private static Observable<ListView> createBottomHitObservable(final ListView lv) {
-        return Observable.create(new Observable.OnSubscribe<ListView>() {
+    private static Observable<Void> createBottomHitObservable(final RecyclerView lv, final LinearLayoutManager layoutManager) {
+        return Observable.create(new Observable.OnSubscribe<Void>() {
             @Override
-            public void call(final Subscriber<? super ListView> subscriber) {
-                lv.setOnScrollListener(new AbsListView.OnScrollListener() {
+            public void call(final Subscriber<? super Void> subscriber) {
+                lv.addOnScrollListener(new RecyclerView.OnScrollListener() {
                     private int scrollState;
 
                     @Override
-                    public void onScrollStateChanged(AbsListView view, int scrollState) {
+                    public void onScrollStateChanged(RecyclerView view, int scrollState) {
                         this.scrollState = scrollState;
                     }
 
                     @Override
-                    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                        if (!subscriber.isUnsubscribed() && this.scrollState == SCROLL_STATE_IDLE && firstVisibleItem + visibleItemCount >= totalItemCount) {
+                    public void onScrolled(RecyclerView view, int dx, int dy) {
+                        int totalItemCount = layoutManager.getItemCount();
+                        int visibleItemCount = layoutManager.getChildCount();
+                        int pastItemCount = layoutManager.findFirstVisibleItemPosition();
+
+                        if (!subscriber.isUnsubscribed() && pastItemCount + visibleItemCount >= totalItemCount) {
                             Timber.d("Emitting an onBottom event.");
-                            subscriber.onNext(lv);
+                            subscriber.onNext(null);
                         }
                     }
                 });
