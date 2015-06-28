@@ -10,42 +10,49 @@
             type="com.hkurokawa.qiitandroid.model.Article" />
     </data>
 
-    <RelativeLayout
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/list_item_height"
-        android:paddingTop="16dp">
+        android:layout_height="wrap_content">
 
-        <ImageView
-            android:id="@+id/user_icon"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginRight="16dp"
-            app:error="@{@drawable/ic_error_outline_black_24dp}"
-            app:imageUrl="@{article.user.profileImageUrl}"
-            tools:src="@drawable/ic_error_outline_black_24dp" />
-
-        <TextView
-            android:id="@+id/info"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_toRightOf="@id/user_icon"
-            android:text='@{article.user.urlName + " が" + article.createdAtInWords + "前に投稿しました"}'
-            android:textSize="13sp"
-            tools:text="pugiemonn が3分前に投稿しました" />
+            android:layout_height="@dimen/list_item_height"
+            android:paddingTop="8dp">
 
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/info"
-            android:layout_toRightOf="@id/user_icon"
-            android:ellipsize="end"
-            android:lines="2"
-            android:text="@{article.title}"
-            android:textSize="16sp"
-            tools:text="perlのコマンドでファイル内の文字列を一括置換しました。" />
-    </RelativeLayout>
+            <ImageView
+                android:id="@+id/user_icon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginRight="16dp"
+                app:error="@{@drawable/ic_error_outline_black_24dp}"
+                app:imageUrl="@{article.user.profileImageUrl}"
+                tools:src="@drawable/ic_error_outline_black_24dp" />
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_toRightOf="@id/user_icon"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:text="@{article.title}"
+                android:textSize="17sp"
+                tools:text="perlのコマンドでファイル内の文字列を一括置換しました。" />
+
+            <TextView
+                android:id="@+id/info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/title"
+                android:layout_toRightOf="@id/user_icon"
+                android:ellipsize="end"
+                android:lines="1"
+                android:text='@{article.user.urlName + " が" + article.createdAtInWords + "前に投稿しました"}'
+                android:textSize="13sp"
+                tools:text="pugiemonn が3分前に投稿しました" />
+        </RelativeLayout>
+    </FrameLayout>
 </layout>
