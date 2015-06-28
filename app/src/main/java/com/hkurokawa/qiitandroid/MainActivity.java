@@ -5,8 +5,10 @@ import android.support.annotation.UiThread;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ViewAnimator;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -33,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private ArticleAdapter adapter;
     @InjectView(R.id.list)
     RecyclerView listView;
+    private ViewAnimator footerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
         this.listView.setLayoutManager(layoutManager);
 
         this.adapter = new ArticleAdapter();
+        this.footerView = (ViewAnimator) LayoutInflater.from(this).inflate(R.layout.item_footer, this.listView, false);
+        this.adapter.setFooterView(this.footerView);
         this.listView.setAdapter(this.adapter);
 
         createBottomHitObservable(this.listView, layoutManager).startWith((Void)null).subscribe(new Action1<Void>() {
@@ -138,13 +143,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void call(final Subscriber<? super Void> subscriber) {
                 lv.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                    private int scrollState;
-
-                    @Override
-                    public void onScrollStateChanged(RecyclerView view, int scrollState) {
-                        this.scrollState = scrollState;
-                    }
-
                     @Override
                     public void onScrolled(RecyclerView view, int dx, int dy) {
                         int totalItemCount = layoutManager.getItemCount();
