@@ -15,6 +15,7 @@ import com.google.gson.GsonBuilder;
 import com.hkurokawa.qiitandroid.model.Article;
 import com.hkurokawa.qiitandroid.network.QiitaApiV1;
 import com.hkurokawa.qiitandroid.views.ArticleAdapter;
+import com.hkurokawa.qiitandroid.views.DividerItemDecoration;
 
 import java.util.List;
 
@@ -46,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.inject(this);
 
         this.listView.setHasFixedSize(true);
+        this.listView.addItemDecoration(new DividerItemDecoration(this));
 
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         this.listView.setLayoutManager(layoutManager);
