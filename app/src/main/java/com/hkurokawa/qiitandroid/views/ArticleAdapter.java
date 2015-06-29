@@ -20,6 +20,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
     private static final int VIEW_TYPE_ITEM = 1;
     private List<Article> articles = new ArrayList<>();
     private View footerView;
+    private OnItemClickListener listener;
 
     @Override
     public int getItemViewType(int position) {
@@ -44,10 +45,19 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder holder, final int position) {
         if (holder instanceof ItemViewHolder) {
             final Article a = this.articles.get(position);
-            ((ItemViewHolder) holder).binding.setArticle(a);
+            final ItemViewHolder h = ((ItemViewHolder) holder);
+            h.binding.setArticle(a);
+            h.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (ArticleAdapter.this.listener != null) {
+                        ArticleAdapter.this.listener.onItemClick(a, position);
+                    }
+                }
+            });
         }
     }
 
@@ -67,18 +77,30 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
         this.footerView = footerView;
     }
 
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
+    }
+
+    public static interface OnItemClickListener {
+        public void onItemClick(Article article, int position);
+    }
+
     public abstract static class ViewHolder extends RecyclerView.ViewHolder {
         public ViewHolder(View itemView) {
             super(itemView);
         }
     }
 
-    public static class ItemViewHolder extends ViewHolder {
+    private static class ItemViewHolder extends ViewHolder {
         private ItemArticleBinding binding;
 
         public ItemViewHolder(ItemArticleBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
+        }
+
+        public void setOnClickListener(View.OnClickListener listener) {
+            this.binding.getRoot().setOnClickListener(listener);
         }
     }
 

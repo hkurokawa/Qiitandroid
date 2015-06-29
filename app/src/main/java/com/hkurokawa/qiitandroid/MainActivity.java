@@ -1,5 +1,6 @@
 package com.hkurokawa.qiitandroid;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.UiThread;
 import android.support.v7.app.AppCompatActivity;
@@ -32,7 +33,7 @@ import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ArticleAdapter.OnItemClickListener {
     private ArticleAdapter adapter;
     @InjectView(R.id.list)
     RecyclerView listView;
@@ -53,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
         this.listView.setLayoutManager(layoutManager);
 
         this.adapter = new ArticleAdapter();
+        this.adapter.setOnItemClickListener(this);
         this.footerView = (ViewAnimator) LayoutInflater.from(this).inflate(R.layout.item_footer, this.listView, false);
         this.adapter.setFooterView(this.footerView);
         this.listView.setAdapter(this.adapter);
@@ -138,6 +140,15 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onItemClick(Article article, int position) {
+        final String body = article.getBody();
+        final Intent intent = new Intent(this, ArticleViewActivity.class);
+        intent.putExtra(ArticleViewActivity.INTENT_KEY_TITLE, article.getTitle());
+        intent.putExtra(ArticleViewActivity.INTENT_KEY_CONTENT, body);
+        this.startActivity(intent);
     }
 
     private static Observable<Void> createBottomHitObservable(final RecyclerView lv, final LinearLayoutManager layoutManager) {
