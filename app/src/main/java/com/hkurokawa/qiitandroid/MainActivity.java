@@ -1,19 +1,22 @@
 package com.hkurokawa.qiitandroid;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.UiThread;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.AbsListView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.widget.ViewAnimator;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.hkurokawa.qiitandroid.model.Article;
 import com.hkurokawa.qiitandroid.network.QiitaApiV1;
 import com.hkurokawa.qiitandroid.views.ArticleAdapter;
+import com.hkurokawa.qiitandroid.views.DividerItemDecoration;
 
 import java.util.List;
 
@@ -30,10 +33,11 @@ import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
-public class MainActivity extends AppCompatActivity {
-    ArrayAdapter<Article> adapter;
+public class MainActivity extends AppCompatActivity implements ArticleAdapter.OnItemClickListener {
+    private ArticleAdapter adapter;
     @InjectView(R.id.list)
-    ListView listView;
+    RecyclerView listView;
+    private ViewAnimator footerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,19 +47,24 @@ public class MainActivity extends AppCompatActivity {
 
         ButterKnife.inject(this);
 
-        this.adapter = new ArticleAdapter(this);
-        this.listView.setAdapter(this.adapter);
-    }
+        this.listView.setHasFixedSize(true);
+        this.listView.addItemDecoration(new DividerItemDecoration(this));
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        createBottomHitObservable(this.listView).subscribe(new Action1<ListView>() {
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        this.listView.setLayoutManager(layoutManager);
+
+        this.adapter = new ArticleAdapter();
+        this.adapter.setOnItemClickListener(this);
+        this.footerView = (ViewAnimator) LayoutInflater.from(this).inflate(R.layout.item_footer, this.listView, false);
+        this.adapter.setFooterView(this.footerView);
+        this.listView.setAdapter(this.adapter);
+
+        createBottomHitObservable(this.listView, layoutManager).startWith((Void)null).subscribe(new Action1<Void>() {
             private boolean loading;
             private int page = 1;
 
             @Override
-            public void call(ListView listView) {
+            public void call(Void val) {
                 if (!this.loading) {
                     this.loading = true;
                     // Query the next page
@@ -95,6 +104,11 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
     private QiitaApiV1 buildQiitaApiV1() {
         final RestAdapter.Builder builder = new RestAdapter.Builder().setEndpoint("https://qiita.com");
         if (BuildConfig.DEBUG) {
@@ -128,23 +142,29 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private static Observable<ListView> createBottomHitObservable(final ListView lv) {
-        return Observable.create(new Observable.OnSubscribe<ListView>() {
+    @Override
+    public void onItemClick(Article article, int position) {
+        final String body = article.getBody();
+        final Intent intent = new Intent(this, ArticleViewActivity.class);
+        intent.putExtra(ArticleViewActivity.INTENT_KEY_TITLE, article.getTitle());
+        intent.putExtra(ArticleViewActivity.INTENT_KEY_CONTENT, body);
+        this.startActivity(intent);
+    }
+
+    private static Observable<Void> createBottomHitObservable(final RecyclerView lv, final LinearLayoutManager layoutManager) {
+        return Observable.create(new Observable.OnSubscribe<Void>() {
             @Override
-            public void call(final Subscriber<? super ListView> subscriber) {
-                lv.setOnScrollListener(new AbsListView.OnScrollListener() {
-                    private int scrollState;
-
+            public void call(final Subscriber<? super Void> subscriber) {
+                lv.addOnScrollListener(new RecyclerView.OnScrollListener() {
                     @Override
-                    public void onScrollStateChanged(AbsListView view, int scrollState) {
-                        this.scrollState = scrollState;
-                    }
+                    public void onScrolled(RecyclerView view, int dx, int dy) {
+                        int totalItemCount = layoutManager.getItemCount();
+                        int visibleItemCount = layoutManager.getChildCount();
+                        int pastItemCount = layoutManager.findFirstVisibleItemPosition();
 
-                    @Override
-                    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                        if (!subscriber.isUnsubscribed() && this.scrollState == SCROLL_STATE_IDLE && firstVisibleItem + visibleItemCount >= totalItemCount) {
+                        if (!subscriber.isUnsubscribed() && pastItemCount + visibleItemCount >= totalItemCount) {
                             Timber.d("Emitting an onBottom event.");
-                            subscriber.onNext(lv);
+                            subscriber.onNext(null);
                         }
                     }
                 });
