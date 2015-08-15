@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Fill in the Client ID and Client Secret with your app. -->
+    <string name="qiita_client_id"></string>
+    <string name="qiita_client_secret"></string>
+</resources>
