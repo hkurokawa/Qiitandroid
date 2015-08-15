@@ -11,11 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ViewAnimator;
 
-import com.google.gson.FieldNamingPolicy;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.hkurokawa.qiitandroid.model.Article;
-import com.hkurokawa.qiitandroid.network.QiitaApiV1;
 import com.hkurokawa.qiitandroid.views.ArticleAdapter;
 import com.hkurokawa.qiitandroid.views.DividerItemDecoration;
 
@@ -23,8 +19,6 @@ import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import retrofit.RestAdapter;
-import retrofit.converter.GsonConverter;
 import rx.Observable;
 import rx.Observer;
 import rx.Subscriber;
@@ -69,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements ArticleAdapter.On
                 if (!this.loading) {
                     this.loading = true;
                     // Query the next page
-                    buildQiitaApiV1().items(this.page)
+                    QiitaApi.createV1().items(this.page)
                             .subscribeOn(Schedulers.newThread())
                             .observeOn(AndroidSchedulers.mainThread())
                             .flatMap(new Func1<List<Article>, Observable<Article>>() {
@@ -110,20 +104,6 @@ public class MainActivity extends AppCompatActivity implements ArticleAdapter.On
         super.onStart();
     }
 
-    private QiitaApiV1 buildQiitaApiV1() {
-        final RestAdapter.Builder builder = new RestAdapter.Builder().setEndpoint("https://qiita.com");
-        if (BuildConfig.DEBUG) {
-            builder.setLogLevel(RestAdapter.LogLevel.FULL);
-        }
-        final Gson gson = new GsonBuilder()
-                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-                .setDateFormat("yyyy-MM-dd HH:mm:ss z") // RFC 822 format
-                .create();
-        builder.setConverter(new GsonConverter(gson));
-
-        return builder.build().create(QiitaApiV1.class);
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -140,6 +120,7 @@ public class MainActivity extends AppCompatActivity implements ArticleAdapter.On
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            this.startActivity(new Intent(this, LoginActivity.class));
             return true;
         }
 
