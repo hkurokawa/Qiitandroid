@@ -15,33 +15,23 @@ public class Article {
     private User user;
     private String title;
     @RFC822
-    @SerializedName("created_at")
     private Date createdAt;
     @RFC822
-    @SerializedName("updated_at")
     private Date updatedAt;
-    @SerializedName("created_at_in_words")
     private String createdAtInWords;
-    @SerializedName("updated_at_in_words")
     private String updatedAtInWords;
     private List<Tag> tags;
-    @SerializedName("stock_count")
     private int stockCount;
-    @SerializedName("comment_count")
     private int commentCount;
     private String url;
-    @SerializedName("created_at_as_seconds")
     private long createdAtAsSeconds;
     private boolean tweet;
-    @SerializedName("gist_url")
     private String gistUrl;
     @SerializedName("private")
     private boolean inPrivate;
     private boolean stocked;
-    @SerializedName("raw_body")
     private String rawBody;
     private String body;
-    @SerializedName("stock_users")
     private List<String> stockUsers;
 
     public long getId() {
