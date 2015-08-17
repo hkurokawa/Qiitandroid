@@ -5,14 +5,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.hkurokawa.domain.Article;
 import com.hkurokawa.qiitandroid.databinding.ItemArticleBinding;
-import com.hkurokawa.qiitandroid.model.Article;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * An ArrayAdapter to display a list of {@link com.hkurokawa.qiitandroid.model.Article}s.
+ * An ArrayAdapter to display a list of {@link Article}s.
  * Created by hiroshi on 2015/06/10.
  */
 public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHolder> {

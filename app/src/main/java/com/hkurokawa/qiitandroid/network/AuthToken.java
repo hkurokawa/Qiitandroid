@@ -1,4 +1,4 @@
-package com.hkurokawa.qiitandroid.model;
+package com.hkurokawa.qiitandroid.network;
 
 /**
  * Represents an auth token returned with /api/v2/access_tokens.

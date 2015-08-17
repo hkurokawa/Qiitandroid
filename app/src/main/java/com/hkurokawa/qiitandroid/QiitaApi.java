@@ -17,7 +17,7 @@ public class QiitaApi {
     public static QiitaApiV1 createV1() {
         final RestAdapter.Builder builder = new RestAdapter.Builder().setEndpoint("https://qiita.com");
         if (BuildConfig.DEBUG) {
-            builder.setLogLevel(RestAdapter.LogLevel.FULL);
+            builder.setLogLevel(RestAdapter.LogLevel.BASIC);
         }
         final Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)

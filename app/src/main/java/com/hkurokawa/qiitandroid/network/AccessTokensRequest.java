@@ -1,4 +1,4 @@
-package com.hkurokawa.qiitandroid.model;
+package com.hkurokawa.qiitandroid.network;
 
 /**
  * Represents a request for /api/v2/access_tokens

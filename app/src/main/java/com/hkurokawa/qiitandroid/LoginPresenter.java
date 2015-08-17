@@ -1,10 +1,9 @@
 package com.hkurokawa.qiitandroid;
 
 import android.net.Uri;
-import android.util.Log;
 
-import com.hkurokawa.qiitandroid.model.AccessTokensRequest;
-import com.hkurokawa.qiitandroid.model.AuthToken;
+import com.hkurokawa.qiitandroid.network.AccessTokensRequest;
+import com.hkurokawa.qiitandroid.network.AuthToken;
 
 import java.util.EnumSet;
 import java.util.Locale;

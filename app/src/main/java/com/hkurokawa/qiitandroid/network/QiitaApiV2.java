@@ -1,8 +1,5 @@
 package com.hkurokawa.qiitandroid.network;
 
-import com.hkurokawa.qiitandroid.model.AccessTokensRequest;
-import com.hkurokawa.qiitandroid.model.AuthToken;
-
 import retrofit.http.Body;
 import retrofit.http.POST;
 import rx.Observable;

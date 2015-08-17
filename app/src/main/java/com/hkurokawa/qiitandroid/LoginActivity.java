@@ -7,7 +7,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.ProgressBar;
 
-import com.hkurokawa.qiitandroid.model.AuthToken;
+import com.hkurokawa.qiitandroid.network.AuthToken;
 
 import java.util.EnumSet;
 
