@@ -1,6 +1,7 @@
 package com.hkurokawa.qiitandroid.screens.login;
 
 import android.net.http.SslError;
+import android.support.annotation.NonNull;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -41,7 +42,7 @@ public class OAuthWebViewClient extends WebViewClient {
     }
 
     @Override
-    public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+    public void onReceivedSslError(WebView view, @NonNull SslErrorHandler handler, SslError error) {
         super.onReceivedSslError(view, handler, error);
         if (this.listener != null) {
             this.listener.onError(new WebViewException("SSL Failure.", error.getPrimaryError(), error.getUrl()));

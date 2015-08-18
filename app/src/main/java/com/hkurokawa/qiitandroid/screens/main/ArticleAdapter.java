@@ -81,8 +81,8 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
         this.listener = listener;
     }
 
-    public static interface OnItemClickListener {
-        public void onItemClick(Article article, int position);
+    public interface OnItemClickListener {
+        void onItemClick(Article article, int position);
     }
 
     public abstract static class ViewHolder extends RecyclerView.ViewHolder {

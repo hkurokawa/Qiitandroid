@@ -30,8 +30,7 @@ public class NetworkArticlesRepository implements ArticlesRepository {
     }
 
     private static Article convertToDomainModel(com.hkurokawa.qiitandroid.network.Article a) {
-        final Article article = new Article(a.getId(), convertToDomainModel(a.getUser()), a.getTitle(), a.getCreatedAt(), a.getCreatedAtInWords(), a.getUrl(), a.getBody());
-        return article;
+        return new Article(a.getId(), convertToDomainModel(a.getUser()), a.getTitle(), a.getCreatedAt(), a.getCreatedAtInWords(), a.getUrl(), a.getBody());
     }
 
     private static User convertToDomainModel(com.hkurokawa.qiitandroid.network.User u) {
