@@ -1,11 +1,11 @@
-package com.hkurokawa.qiitandroid.views;
+package com.hkurokawa.qiitandroid.screens.main;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.hkurokawa.domain.Article;
+import com.hkurokawa.qiitandroid.domain.article.Article;
 import com.hkurokawa.qiitandroid.databinding.ItemArticleBinding;
 
 import java.util.ArrayList;

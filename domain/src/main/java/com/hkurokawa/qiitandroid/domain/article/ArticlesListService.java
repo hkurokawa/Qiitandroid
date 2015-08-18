@@ -1,10 +1,11 @@
-package com.hkurokawa.domain;
+package com.hkurokawa.qiitandroid.domain.article;
+
+import com.hkurokawa.qiitandroid.domain.repository.ArticlesRepository;
 
 import java.util.List;
 
 import rx.Observable;
 import rx.Subscriber;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -20,7 +21,7 @@ public class ArticlesListService {
 
     /**
      * Returns an observable to observer a list of a list of articles.
-     * The observable must returns {@link List<Article>} on {@link Subscriber#onNext(Object)} while
+     * The observable must returns {@link List< Article >} on {@link Subscriber#onNext(Object)} while
      * there are any articles to list and must call {@link Subscriber#onCompleted()} when no more
      * articles to show.
      * @param trigger an {@link Observable} to trigger the loading of the next list of articles to return.

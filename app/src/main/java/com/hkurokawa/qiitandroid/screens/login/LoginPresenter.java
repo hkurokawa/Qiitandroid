@@ -1,9 +1,11 @@
-package com.hkurokawa.qiitandroid;
+package com.hkurokawa.qiitandroid.screens.login;
 
 import android.net.Uri;
 
+import com.hkurokawa.qiitandroid.Presenter;
 import com.hkurokawa.qiitandroid.network.AccessTokensRequest;
 import com.hkurokawa.qiitandroid.network.AuthToken;
+import com.hkurokawa.qiitandroid.network.QiitaApi;
 
 import java.util.EnumSet;
 import java.util.Locale;

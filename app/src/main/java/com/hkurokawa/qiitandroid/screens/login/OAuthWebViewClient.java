@@ -1,4 +1,4 @@
-package com.hkurokawa.qiitandroid;
+package com.hkurokawa.qiitandroid.screens.login;
 
 import android.net.http.SslError;
 import android.webkit.SslErrorHandler;

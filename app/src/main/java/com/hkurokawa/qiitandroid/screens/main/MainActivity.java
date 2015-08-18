@@ -1,4 +1,4 @@
-package com.hkurokawa.qiitandroid;
+package com.hkurokawa.qiitandroid.screens.main;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,10 +10,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ViewAnimator;
 
-import com.hkurokawa.domain.Article;
-import com.hkurokawa.domain.ArticlesListService;
+import com.hkurokawa.qiitandroid.screens.aritcleview.ArticleViewActivity;
+import com.hkurokawa.qiitandroid.R;
+import com.hkurokawa.qiitandroid.domain.article.Article;
+import com.hkurokawa.qiitandroid.domain.article.ArticlesListService;
 import com.hkurokawa.qiitandroid.domain.repository.NetworkArticlesRepository;
-import com.hkurokawa.qiitandroid.views.ArticleAdapter;
+import com.hkurokawa.qiitandroid.screens.login.LoginActivity;
 import com.hkurokawa.qiitandroid.views.DividerItemDecoration;
 
 import java.util.List;

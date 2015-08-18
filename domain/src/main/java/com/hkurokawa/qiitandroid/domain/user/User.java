@@ -1,4 +1,4 @@
-package com.hkurokawa.domain;
+package com.hkurokawa.qiitandroid.domain.user;
 
 /**
  * Entity to represents a user.

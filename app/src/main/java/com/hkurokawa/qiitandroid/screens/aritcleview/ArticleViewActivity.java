@@ -1,9 +1,11 @@
-package com.hkurokawa.qiitandroid;
+package com.hkurokawa.qiitandroid.screens.aritcleview;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.widget.TextView;
+
+import com.hkurokawa.qiitandroid.R;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;

@@ -1,4 +1,4 @@
-package com.hkurokawa.qiitandroid;
+package com.hkurokawa.qiitandroid.screens.login;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -7,6 +7,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.ProgressBar;
 
+import com.hkurokawa.qiitandroid.R;
 import com.hkurokawa.qiitandroid.network.AuthToken;
 
 import java.util.EnumSet;
