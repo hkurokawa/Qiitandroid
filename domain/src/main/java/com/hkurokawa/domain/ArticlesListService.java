@@ -1,11 +1,11 @@
 package com.hkurokawa.domain;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import rx.Observable;
 import rx.Subscriber;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 
 /**
  * A service to list articles.
@@ -13,40 +13,51 @@ import rx.Subscriber;
  */
 public class ArticlesListService {
     private ArticlesRepository repository;
-    private Observable<List<Article>> observable;
-    private Subscriber<? super List<Article>> subscriber;
-    private AtomicInteger page = new AtomicInteger();
-    private AtomicBoolean loading = new AtomicBoolean();
 
     public ArticlesListService(ArticlesRepository repository) {
         this.repository = repository;
-        this.observable = Observable.create(new Observable.OnSubscribe<List<Article>>() {
+    }
+
+    /**
+     * Returns an observable to observer a list of a list of articles.
+     * The observable must returns {@link List<Article>} on {@link Subscriber#onNext(Object)} while
+     * there are any articles to list and must call {@link Subscriber#onCompleted()} when no more
+     * articles to show.
+     * @param trigger an {@link Observable} to trigger the loading of the next list of articles to return.
+     * @return an {@link Observable} to observer a list of a list of articles.
+     */
+    public Observable<List<Article>> list(final Observable<Void> trigger) {
+        return Observable.create(new Observable.OnSubscribe<List<Article>>() {
             @Override
-            public void call(Subscriber<? super List<Article>> subscriber) {
-                ArticlesListService.this.subscriber = subscriber;
-                ArticlesListService.this.next();
+            public void call(final Subscriber<? super List<Article>> subscriber) {
+                trigger.observeOn(Schedulers.newThread()).subscribe(new Subscriber<Void>() {
+                    private int page;
+
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        if (!subscriber.isUnsubscribed()) {
+                            subscriber.onError(e);
+                        }
+                    }
+
+                    @Override
+                    public void onNext(Void aVoid) {
+                        if (!subscriber.isUnsubscribed()) {
+                            final List<Article> articles = ArticlesListService.this.repository.list(this.page);
+                            if (articles == null) {
+                                subscriber.onCompleted();
+                            } else {
+                                this.page++;
+                                subscriber.onNext(articles);
+                            }
+                        }
+                    }
+                });
             }
         });
-    }
-
-    public Observable<List<Article>> source() {
-        return this.observable;
-    }
-
-    public void next() {
-        if (this.subscriber != null && !this.subscriber.isUnsubscribed() && this.loading.compareAndSet(false, true)) {
-            try {
-                final List<Article> articles = this.repository.list(this.page.incrementAndGet());
-                if (articles == null) {
-                    this.subscriber.onCompleted();
-                } else {
-                    this.subscriber.onNext(articles);
-                }
-            } catch (Exception e) {
-                this.subscriber.onError(e);
-            } finally {
-                this.loading.set(false);
-            }
-        }
     }
 }
