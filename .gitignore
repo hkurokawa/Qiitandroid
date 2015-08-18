@@ -32,3 +32,6 @@ proguard/
 
 # Log Files
 *.log
+
+# API secret key
+app/src/main/res/values/qiita_api.xml

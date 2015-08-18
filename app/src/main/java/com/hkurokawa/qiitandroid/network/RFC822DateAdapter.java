@@ -1,4 +1,4 @@
-package com.hkurokawa.qiitandroid.model;
+package com.hkurokawa.qiitandroid.network;
 
 import com.squareup.moshi.JsonReader;
 import com.squareup.moshi.JsonWriter;

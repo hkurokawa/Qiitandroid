@@ -1,4 +1,4 @@
-package com.hkurokawa.qiitandroid.model;
+package com.hkurokawa.qiitandroid.network;
 
 import com.google.gson.annotations.SerializedName;
 

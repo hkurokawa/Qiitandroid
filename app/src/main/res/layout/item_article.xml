@@ -7,7 +7,7 @@
 
         <variable
             name="article"
-            type="com.hkurokawa.qiitandroid.model.Article" />
+            type="com.hkurokawa.domain.Article" />
     </data>
 
     <FrameLayout
@@ -50,7 +50,7 @@
                 android:layout_toRightOf="@id/user_icon"
                 android:ellipsize="end"
                 android:lines="1"
-                android:text='@{article.user.urlName + " が" + article.createdAtInWords + "前に投稿しました"}'
+                android:text='@{article.user.name + " が" + article.createdAtInWords + "前に投稿しました"}'
                 android:textSize="13sp"
                 tools:text="pugiemonn が3分前に投稿しました" />
         </RelativeLayout>

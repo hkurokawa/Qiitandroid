@@ -9,12 +9,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ViewAnimator;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.hkurokawa.qiitandroid.model.Article;
-import com.hkurokawa.qiitandroid.network.QiitaApiV1;
+import com.hkurokawa.domain.Article;
+import com.hkurokawa.domain.ArticlesListService;
+import com.hkurokawa.qiitandroid.domain.repository.NetworkArticlesRepository;
 import com.hkurokawa.qiitandroid.views.ArticleAdapter;
 import com.hkurokawa.qiitandroid.views.DividerItemDecoration;
 
@@ -22,10 +22,9 @@ import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import retrofit.RestAdapter;
-import retrofit.converter.GsonConverter;
 import rx.Observable;
 import rx.Observer;
+import rx.Scheduler;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -34,6 +33,7 @@ import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity implements ArticleAdapter.OnItemClickListener {
+    private ArticlesListService service;
     private ArticleAdapter adapter;
     @InjectView(R.id.list)
     RecyclerView listView;
@@ -59,65 +59,53 @@ public class MainActivity extends AppCompatActivity implements ArticleAdapter.On
         this.adapter.setFooterView(this.footerView);
         this.listView.setAdapter(this.adapter);
 
-        createBottomHitObservable(this.listView, layoutManager).startWith((Void)null).subscribe(new Action1<Void>() {
-            private boolean loading;
-            private int page = 1;
+        this.service = new ArticlesListService(new NetworkArticlesRepository());
+        final Scheduler scheduler = Schedulers.newThread();
+        this.service.source()
+                .subscribeOn(scheduler)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<List<Article>>() {
+                    @Override
+                    public void onCompleted() {
+                        MainActivity.this.footerView.setDisplayedChild(1);
+                    }
 
-            @Override
-            public void call(Void val) {
-                if (!this.loading) {
-                    this.loading = true;
-                    // Query the next page
-                    buildQiitaApiV1().items(this.page)
-                            .subscribeOn(Schedulers.newThread())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .flatMap(new Func1<List<Article>, Observable<Article>>() {
-                                @Override
-                                public Observable<Article> call(List<Article> response) {
-                                    return Observable.from(response);
-                                }
-                            }).subscribe(new Observer<Article>() {
-                        @Override
-                        @UiThread
-                        public void onCompleted() {
-                            Timber.d("Retrofit call for Qiita items completed.");
-                            MainActivity.this.adapter.notifyDataSetChanged();
-                            loading = false;
-                            page++;
-                        }
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e, "Failed to list articles.");
+                    }
 
-                        @Override
-                        @UiThread
-                        public void onError(Throwable e) {
-                            Timber.e(e, "Error while getting a list of Qiita items.");
-                            loading = false;
+                    @Override
+                    public void onNext(List<Article> articles) {
+                        for (Article a : articles) {
+                            MainActivity.this.adapter.add(a);
                         }
+                        MainActivity.this.adapter.notifyDataSetChanged();
+                    }
+                });
+        createBottomHitObservable(MainActivity.this.listView, layoutManager)
+                .observeOn(scheduler)
+                .subscribe(new Observer<Void>() {
+                    @Override
+                    public void onCompleted() {
 
-                        @Override
-                        @UiThread
-                        public void onNext(Article article) {
-                            MainActivity.this.adapter.add(article);
-                        }
-                    });
-                }
-            }
-        });
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e, "Failed to detect the bottom of the list.");
+                    }
+
+                    @Override
+                    public void onNext(Void aVoid) {
+                        MainActivity.this.service.next();
+                    }
+                });
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-    }
-
-    private QiitaApiV1 buildQiitaApiV1() {
-        final RestAdapter.Builder builder = new RestAdapter.Builder().setEndpoint("https://qiita.com");
-        if (BuildConfig.DEBUG) {
-            builder.setLogLevel(RestAdapter.LogLevel.FULL);
-        }
-        final Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss z").create(); // RFC 822 format
-        builder.setConverter(new GsonConverter(gson));
-
-        return builder.build().create(QiitaApiV1.class);
     }
 
     @Override
@@ -136,6 +124,7 @@ public class MainActivity extends AppCompatActivity implements ArticleAdapter.On
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            this.startActivity(new Intent(this, LoginActivity.class));
             return true;
         }
 
