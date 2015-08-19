@@ -13,7 +13,7 @@ import java.util.List;
 public interface ArticlesRepository {
     /**
      * Returns a list of articles on the specified page.
-     * @param page the page to return the articles on
+     * @param page the page to return the articles on (starting from 0).
      * @return return <code>null</code> if there is no more articles, the articles on the specified page otherwise.
      */
     @Nullable

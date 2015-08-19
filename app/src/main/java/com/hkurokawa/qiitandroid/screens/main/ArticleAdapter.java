@@ -66,11 +66,17 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
         return this.articles.size() + (this.footerView != null ? 1 : 0);
     }
 
-    public void add(Article article) {
-        if (this.articles == null) {
-            this.articles = new ArrayList<>();
+    @Override
+    public long getItemId(int position) {
+        if (position >= this.articles.size()) {
+            return -1L;
+        } else {
+            return this.articles.get(position).getId();
         }
-        this.articles.add(article);
+    }
+
+    public void set(List<Article> articles) {
+        this.articles = articles;
     }
 
     public void setFooterView(View footerView) {
