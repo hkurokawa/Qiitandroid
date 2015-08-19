@@ -1,4 +1,6 @@
-package com.hkurokawa.domain;
+package com.hkurokawa.qiitandroid.domain.application;
+
+import com.hkurokawa.qiitandroid.domain.user.User;
 
 /**
  * Entity to represent an application status. Single instance on the process.

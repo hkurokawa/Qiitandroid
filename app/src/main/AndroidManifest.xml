@@ -10,7 +10,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".MainActivity"
+            android:name=".screens.main.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -19,20 +19,20 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ArticleViewActivity"
+            android:name=".screens.aritcleview.ArticleViewActivity"
             android:label="@string/title_activity_article_view"
-            android:parentActivityName=".MainActivity" >
+            android:parentActivityName=".screens.main.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.hkurokawa.qiitandroid.MainActivity" />
+                android:value=".screens.main.MainActivity" />
         </activity>
         <activity
-            android:name=".LoginActivity"
+            android:name=".screens.login.LoginActivity"
             android:label="@string/title_activity_login"
-            android:parentActivityName=".MainActivity" >
+            android:parentActivityName=".screens.main.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.hkurokawa.qiitandroid.MainActivity" />
+                android:value=".screens.main.MainActivity" />
         </activity>
     </application>
 

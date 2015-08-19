@@ -1,4 +1,4 @@
-package com.hkurokawa.qiitandroid;
+package com.hkurokawa.qiitandroid.screens.login;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -7,6 +7,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.ProgressBar;
 
+import com.hkurokawa.qiitandroid.R;
 import com.hkurokawa.qiitandroid.network.AuthToken;
 
 import java.util.EnumSet;
@@ -22,8 +23,6 @@ public class LoginActivity extends AppCompatActivity implements LoginScreen, OAu
     @InjectView(R.id.login_progressbar)
     ProgressBar progressBar;
 
-    private OAuthWebViewClient webViewClient;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,9 +36,9 @@ public class LoginActivity extends AppCompatActivity implements LoginScreen, OAu
         webSettings.setSaveFormData(false);
         this.webView.setVerticalScrollBarEnabled(false);
         this.webView.setHorizontalScrollBarEnabled(false);
-        this.webViewClient = new OAuthWebViewClient();
-        this.webViewClient.setListener(this);
-        this.webView.setWebViewClient(this.webViewClient);
+        final OAuthWebViewClient webViewClient = new OAuthWebViewClient();
+        webViewClient.setListener(this);
+        this.webView.setWebViewClient(webViewClient);
         this.webView.setWebViewClient(webViewClient);
 
         if (presenter == null) {

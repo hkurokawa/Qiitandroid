@@ -7,7 +7,7 @@
 
         <variable
             name="article"
-            type="com.hkurokawa.domain.Article" />
+            type="com.hkurokawa.qiitandroid.domain.article.Article" />
     </data>
 
     <FrameLayout

@@ -1,4 +1,6 @@
-package com.hkurokawa.domain;
+package com.hkurokawa.qiitandroid.domain.article;
+
+import com.hkurokawa.qiitandroid.domain.user.User;
 
 import java.util.Date;
 

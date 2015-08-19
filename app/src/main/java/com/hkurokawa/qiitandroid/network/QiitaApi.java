@@ -1,8 +1,9 @@
-package com.hkurokawa.qiitandroid;
+package com.hkurokawa.qiitandroid.network;
 
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.hkurokawa.qiitandroid.BuildConfig;
 import com.hkurokawa.qiitandroid.network.QiitaApiV1;
 import com.hkurokawa.qiitandroid.network.QiitaApiV2;
 

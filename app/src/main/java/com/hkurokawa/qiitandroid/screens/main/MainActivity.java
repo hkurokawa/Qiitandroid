@@ -1,21 +1,21 @@
-package com.hkurokawa.qiitandroid;
+package com.hkurokawa.qiitandroid.screens.main;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.UiThread;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ViewAnimator;
 
-import com.hkurokawa.domain.Article;
-import com.hkurokawa.domain.ArticlesListService;
+import com.hkurokawa.qiitandroid.screens.aritcleview.ArticleViewActivity;
+import com.hkurokawa.qiitandroid.R;
+import com.hkurokawa.qiitandroid.domain.article.Article;
+import com.hkurokawa.qiitandroid.domain.article.ArticlesListService;
 import com.hkurokawa.qiitandroid.domain.repository.NetworkArticlesRepository;
-import com.hkurokawa.qiitandroid.views.ArticleAdapter;
+import com.hkurokawa.qiitandroid.screens.login.LoginActivity;
 import com.hkurokawa.qiitandroid.views.DividerItemDecoration;
 
 import java.util.List;
@@ -24,16 +24,11 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import rx.Observable;
 import rx.Observer;
-import rx.Scheduler;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity implements ArticleAdapter.OnItemClickListener {
-    private ArticlesListService service;
     private ArticleAdapter adapter;
     @InjectView(R.id.list)
     RecyclerView listView;
@@ -59,10 +54,8 @@ public class MainActivity extends AppCompatActivity implements ArticleAdapter.On
         this.adapter.setFooterView(this.footerView);
         this.listView.setAdapter(this.adapter);
 
-        this.service = new ArticlesListService(new NetworkArticlesRepository());
-        final Scheduler scheduler = Schedulers.newThread();
-        this.service.source()
-                .subscribeOn(scheduler)
+        final ArticlesListService service = new ArticlesListService(new NetworkArticlesRepository());
+        service.list(createBottomHitObservable(MainActivity.this.listView, layoutManager).startWith((Void) null))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<List<Article>>() {
                     @Override
@@ -81,24 +74,6 @@ public class MainActivity extends AppCompatActivity implements ArticleAdapter.On
                             MainActivity.this.adapter.add(a);
                         }
                         MainActivity.this.adapter.notifyDataSetChanged();
-                    }
-                });
-        createBottomHitObservable(MainActivity.this.listView, layoutManager)
-                .observeOn(scheduler)
-                .subscribe(new Observer<Void>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Timber.e(e, "Failed to detect the bottom of the list.");
-                    }
-
-                    @Override
-                    public void onNext(Void aVoid) {
-                        MainActivity.this.service.next();
                     }
                 });
     }
@@ -145,16 +120,19 @@ public class MainActivity extends AppCompatActivity implements ArticleAdapter.On
             @Override
             public void call(final Subscriber<? super Void> subscriber) {
                 lv.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                    boolean onBottom;
                     @Override
                     public void onScrolled(RecyclerView view, int dx, int dy) {
                         int totalItemCount = layoutManager.getItemCount();
                         int visibleItemCount = layoutManager.getChildCount();
                         int pastItemCount = layoutManager.findFirstVisibleItemPosition();
 
-                        if (!subscriber.isUnsubscribed() && pastItemCount + visibleItemCount >= totalItemCount) {
+                        final boolean isBottom = pastItemCount + visibleItemCount >= totalItemCount;
+                        if (!subscriber.isUnsubscribed() && (!this.onBottom && isBottom)) {
                             Timber.d("Emitting an onBottom event.");
                             subscriber.onNext(null);
                         }
+                        this.onBottom = isBottom;
                     }
                 });
             }

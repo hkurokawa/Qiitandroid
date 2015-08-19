@@ -1,4 +1,6 @@
-package com.hkurokawa.domain;
+package com.hkurokawa.qiitandroid.domain.repository;
+
+import com.hkurokawa.qiitandroid.domain.article.Article;
 
 import org.jetbrains.annotations.Nullable;
 

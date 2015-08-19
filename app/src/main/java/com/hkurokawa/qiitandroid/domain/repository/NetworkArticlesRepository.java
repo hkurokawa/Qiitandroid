@@ -1,10 +1,8 @@
 package com.hkurokawa.qiitandroid.domain.repository;
 
-import com.hkurokawa.domain.Article;
-import com.hkurokawa.domain.ArticlesListService;
-import com.hkurokawa.domain.ArticlesRepository;
-import com.hkurokawa.domain.User;
-import com.hkurokawa.qiitandroid.QiitaApi;
+import com.hkurokawa.qiitandroid.domain.article.Article;
+import com.hkurokawa.qiitandroid.domain.user.User;
+import com.hkurokawa.qiitandroid.network.QiitaApi;
 import com.hkurokawa.qiitandroid.network.QiitaApiV1;
 
 import java.util.ArrayList;
@@ -32,8 +30,7 @@ public class NetworkArticlesRepository implements ArticlesRepository {
     }
 
     private static Article convertToDomainModel(com.hkurokawa.qiitandroid.network.Article a) {
-        final Article article = new Article(a.getId(), convertToDomainModel(a.getUser()), a.getTitle(), a.getCreatedAt(), a.getCreatedAtInWords(), a.getUrl(), a.getBody());
-        return article;
+        return new Article(a.getId(), convertToDomainModel(a.getUser()), a.getTitle(), a.getCreatedAt(), a.getCreatedAtInWords(), a.getUrl(), a.getBody());
     }
 
     private static User convertToDomainModel(com.hkurokawa.qiitandroid.network.User u) {
