@@ -2,16 +2,15 @@ package com.hkurokawa.qiitandroid.screens.login;
 
 import android.net.Uri;
 
-import com.hkurokawa.qiitandroid.screens.Presenter;
 import com.hkurokawa.qiitandroid.network.AccessTokensRequest;
 import com.hkurokawa.qiitandroid.network.AuthToken;
 import com.hkurokawa.qiitandroid.network.QiitaApi;
+import com.hkurokawa.qiitandroid.screens.Presenter;
 
 import java.util.EnumSet;
 import java.util.Locale;
 import java.util.UUID;
 
-import rx.functions.Action1;
 import timber.log.Timber;
 
 /**
@@ -84,22 +83,14 @@ public class LoginPresenter extends Presenter {
 
     private void accessRequestSuccess(String code) {
         final AccessTokensRequest request = new AccessTokensRequest(this.clientId, this.clientSecret, code);
-        QiitaApi.createV2().accessTokens(request).doOnError(new Action1<Throwable>() {
-            @Override
-            public void call(Throwable throwable) {
-                Timber.e("Failed to get access token.", throwable);
+        QiitaApi.createV2().accessTokens(request).subscribe(authToken -> {
+            final String token = authToken.getToken();
+            Timber.d("token = [%s].", token);
+            // TODO store auth token.
+            if (LoginPresenter.this.screen != null) {
+                LoginPresenter.this.screen.close();
             }
-        }).subscribe(new Action1<AuthToken>() {
-            @Override
-            public void call(AuthToken authToken) {
-                final String token = authToken.getToken();
-                Timber.d("token = [%s].", token);
-                // TODO store auth token.
-                if (LoginPresenter.this.screen != null) {
-                    LoginPresenter.this.screen.close();
-                }
-            }
-        });
+        }, throwable -> Timber.e("Failed to get access token.", throwable));
     }
 
     private void accessRequestFailure() {

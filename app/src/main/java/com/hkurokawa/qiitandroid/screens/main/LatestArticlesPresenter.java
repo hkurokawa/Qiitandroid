@@ -1,5 +1,6 @@
 package com.hkurokawa.qiitandroid.screens.main;
 
+import com.applied_duality.rxmobile_android.AndroidSchedulers;
 import com.hkurokawa.qiitandroid.domain.article.Article;
 import com.hkurokawa.qiitandroid.domain.article.ArticlesListService;
 import com.hkurokawa.qiitandroid.domain.repository.ArticlesRepository;
@@ -8,9 +9,6 @@ import com.hkurokawa.qiitandroid.screens.Router;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import rx.Observer;
-import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Presentation logic to display the latest articles.
@@ -33,22 +31,10 @@ public class LatestArticlesPresenter extends Presenter {
         final ArticlesListService service = new ArticlesListService(this.repository);
         service.list(screen.getBottomHitObservable().startWith((Void) null))
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<List<Article>>() {
-                    @Override
-                    public void onCompleted() {
-                        LatestArticlesPresenter.this.screen.dismissBottomProgressBar();
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        LatestArticlesPresenter.this.screen.logErr(e, "Failed to list articles.");
-                    }
-
-                    @Override
-                    public void onNext(List<Article> articles) {
-                        LatestArticlesPresenter.this.addArticles(articles);
-                    }
-                });
+                .subscribe(
+                        LatestArticlesPresenter.this::addArticles,
+                        e -> LatestArticlesPresenter.this.screen.logErr(e, "Failed to list articles."),
+                        LatestArticlesPresenter.this.screen::dismissBottomProgressBar);
     }
 
     private void addArticles(List<Article> articles) {

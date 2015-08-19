@@ -5,8 +5,8 @@ import com.hkurokawa.qiitandroid.domain.repository.ArticlesRepository;
 import java.util.List;
 
 import rx.Observable;
-import rx.Subscriber;
-import rx.schedulers.Schedulers;
+import rx.Observer;
+import rx.schedulers.NewThreadScheduler;
 
 /**
  * A service to list articles.
@@ -21,17 +21,15 @@ public class ArticlesListService {
 
     /**
      * Returns an observable to observer a list of a list of articles.
-     * The observable must returns {@link List< Article >} on {@link Subscriber#onNext(Object)} while
-     * there are any articles to list and must call {@link Subscriber#onCompleted()} when no more
+     * The observable must returns {@link List< Article >} on {@link Observer#onNext(Object)} while
+     * there are any articles to list and must call {@link Observer#onCompleted()} when no more
      * articles to show.
      * @param trigger an {@link Observable} to trigger the loading of the next list of articles to return.
      * @return an {@link Observable} to observer a list of a list of articles.
      */
     public Observable<List<Article>> list(final Observable<Void> trigger) {
-        return Observable.create(new Observable.OnSubscribe<List<Article>>() {
-            @Override
-            public void call(final Subscriber<? super List<Article>> subscriber) {
-                trigger.observeOn(Schedulers.newThread()).subscribe(new Subscriber<Void>() {
+        return Observable.create(subscriber -> {
+                trigger.observeOn(new NewThreadScheduler()).subscribe(new Observer<Void>() {
                     private int page;
 
                     @Override
@@ -59,6 +57,6 @@ public class ArticlesListService {
                     }
                 });
             }
-        });
+        );
     }
 }

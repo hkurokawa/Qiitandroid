@@ -20,7 +20,6 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import rx.Observable;
-import rx.Subscriber;
 import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity implements ArticleAdapter.OnItemClickListener, LatestArticlesScreen {
@@ -111,11 +110,10 @@ public class MainActivity extends AppCompatActivity implements ArticleAdapter.On
     }
 
     private static Observable<Void> createBottomHitObservable(final RecyclerView lv, final LinearLayoutManager layoutManager) {
-        return Observable.create(new Observable.OnSubscribe<Void>() {
-            @Override
-            public void call(final Subscriber<? super Void> subscriber) {
+        return Observable.create(subscriber ->
                 lv.addOnScrollListener(new RecyclerView.OnScrollListener() {
                     boolean onBottom;
+
                     @Override
                     public void onScrolled(RecyclerView view, int dx, int dy) {
                         int totalItemCount = layoutManager.getItemCount();
@@ -125,12 +123,10 @@ public class MainActivity extends AppCompatActivity implements ArticleAdapter.On
                         final boolean isBottom = pastItemCount + visibleItemCount >= totalItemCount;
                         if (!subscriber.isUnsubscribed() && (!this.onBottom && isBottom)) {
                             Timber.d("Emitting an onBottom event.");
-                            subscriber.onNext(null);
+                            subscriber.onNext((Void)null);
                         }
                         this.onBottom = isBottom;
                     }
-                });
-            }
-        });
+                }));
     }
 }

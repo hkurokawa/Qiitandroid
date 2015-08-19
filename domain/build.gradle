@@ -1,9 +1,21 @@
 apply plugin: 'java'
+apply plugin: 'me.tatarka.retrolambda'
 
-sourceCompatibility = '1.7'
+sourceCompatibility = '1.8'
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'me.tatarka:gradle-retrolambda:3.2.2'
+    }
+}
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'io.reactivex:rxjava:1.0.10'
+    compile files('../libs/rxmobile-java-0.0.1.jar')
+    compile files('../libs/rxmobile-java-0.0.1-javadoc.jar')
     compile 'org.jetbrains:annotations:13.0'
 }
