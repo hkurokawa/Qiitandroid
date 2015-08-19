@@ -21,7 +21,7 @@ public class NetworkArticlesRepository implements ArticlesRepository {
 
     @Override
     public List<Article> list(int page) {
-        final List<com.hkurokawa.qiitandroid.network.Article> items = this.api.items(page);
+        final List<com.hkurokawa.qiitandroid.network.Article> items = this.api.items(page + 1);
         final List<Article> articles = new ArrayList<>(items.size());
         for (com.hkurokawa.qiitandroid.network.Article i : items) {
             articles.add(convertToDomainModel(i));
