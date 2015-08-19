@@ -1,4 +1,4 @@
-package com.hkurokawa.qiitandroid;
+package com.hkurokawa.qiitandroid.screens;
 
 /**
  * Presenter interface.

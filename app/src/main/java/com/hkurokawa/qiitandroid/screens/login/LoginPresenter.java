@@ -2,7 +2,7 @@ package com.hkurokawa.qiitandroid.screens.login;
 
 import android.net.Uri;
 
-import com.hkurokawa.qiitandroid.Presenter;
+import com.hkurokawa.qiitandroid.screens.Presenter;
 import com.hkurokawa.qiitandroid.network.AccessTokensRequest;
 import com.hkurokawa.qiitandroid.network.AuthToken;
 import com.hkurokawa.qiitandroid.network.QiitaApi;
