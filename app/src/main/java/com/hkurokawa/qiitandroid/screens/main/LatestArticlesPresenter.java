@@ -2,7 +2,9 @@ package com.hkurokawa.qiitandroid.screens.main;
 
 import com.applied_duality.rxmobile_android.AndroidSchedulers;
 import com.hkurokawa.qiitandroid.domain.article.Article;
-import com.hkurokawa.qiitandroid.domain.article.ArticlesListService;
+import com.hkurokawa.qiitandroid.domain.article.ArticlesRepositoryFactory;
+import com.hkurokawa.qiitandroid.domain.article.Board;
+import com.hkurokawa.qiitandroid.domain.article.UnbiasedArticle;
 import com.hkurokawa.qiitandroid.domain.repository.ArticlesRepository;
 import com.hkurokawa.qiitandroid.screens.Presenter;
 import com.hkurokawa.qiitandroid.screens.Router;
@@ -16,20 +18,20 @@ import java.util.List;
  */
 public class LatestArticlesPresenter extends Presenter {
     private final Router router;
-    private final ArticlesRepository repository;
+    private ArticlesRepositoryFactory repositoryFactory;
     private LatestArticlesScreen screen;
     private List<Article> articles;
 
-    public LatestArticlesPresenter(Router router, ArticlesRepository repository) {
+    public LatestArticlesPresenter(Router router, ArticlesRepositoryFactory repositoryFactory) {
         this.router = router;
-        this.repository = repository;
+        this.repositoryFactory = repositoryFactory;
         this.articles = new ArrayList<>();
     }
 
     public void takeView(LatestArticlesScreen screen) {
         this.screen = screen;
-        final ArticlesListService service = new ArticlesListService(this.repository);
-        service.list(screen.getBottomHitObservable().startWith((Void) null))
+        final Board<UnbiasedArticle> board = new Board<>(this.repositoryFactory, UnbiasedArticle.class);
+        board.list(screen.getBottomHitObservable().startWith((Void) null))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         LatestArticlesPresenter.this::addArticles,
@@ -37,7 +39,7 @@ public class LatestArticlesPresenter extends Presenter {
                         LatestArticlesPresenter.this.screen::dismissBottomProgressBar);
     }
 
-    private void addArticles(List<Article> articles) {
+    private void addArticles(List<UnbiasedArticle> articles) {
         this.articles.addAll(articles);
         this.publish();
     }

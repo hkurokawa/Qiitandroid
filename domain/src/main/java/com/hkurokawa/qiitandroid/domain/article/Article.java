@@ -1,14 +1,14 @@
 package com.hkurokawa.qiitandroid.domain.article;
 
+/**
+ * Created by hiroshi on 8/21/15.
+ */
+
 import com.hkurokawa.qiitandroid.domain.user.User;
 
 import java.util.Date;
 
-/**
- * Value object to represent an article.
- * Created by hiroshi on 8/16/15.
- */
-public class Article {
+public abstract class Article {
     private final long id;
     private final User user;
     private final String title;

@@ -11,9 +11,16 @@ import android.widget.ViewAnimator;
 
 import com.hkurokawa.qiitandroid.R;
 import com.hkurokawa.qiitandroid.domain.article.Article;
-import com.hkurokawa.qiitandroid.domain.repository.NetworkArticlesRepository;
+import com.hkurokawa.qiitandroid.domain.article.ArticlesRepositoryFactory;
+import com.hkurokawa.qiitandroid.domain.article.BiasedArticle;
+import com.hkurokawa.qiitandroid.domain.article.UnbiasedArticle;
+import com.hkurokawa.qiitandroid.domain.repository.ArticlesRepository;
+import com.hkurokawa.qiitandroid.domain.repository.NetworkBiasedArticlesRepository;
+import com.hkurokawa.qiitandroid.domain.repository.NetworkUnbiasedArticlesRepository;
 import com.hkurokawa.qiitandroid.screens.ActivityRouter;
 import com.hkurokawa.qiitandroid.views.DividerItemDecoration;
+
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -51,7 +58,18 @@ public class MainActivity extends AppCompatActivity implements ArticleAdapter.On
         this.listView.setAdapter(this.adapter);
         this.bottomHitObservable = createBottomHitObservable(this.listView, layoutManager);
 
-        this.presenter = new LatestArticlesPresenter(new ActivityRouter(), new NetworkArticlesRepository());
+        this.presenter = new LatestArticlesPresenter(new ActivityRouter(), new ArticlesRepositoryFactory() {
+            @Override
+            public <T extends Article> ArticlesRepository<T> create(@Nullable String teamId, @Nullable String userToken, Class<T> clazz) {
+                if (clazz == UnbiasedArticle.class) {
+                    return (ArticlesRepository<T>) new NetworkUnbiasedArticlesRepository();
+                } else if (clazz == BiasedArticle.class) {
+                    return (ArticlesRepository<T>) new NetworkBiasedArticlesRepository();
+                } else {
+                    throw new IllegalArgumentException("Unknown Article class type: " + clazz);
+                }
+            }
+        });
         this.presenter.takeView(this);
     }
 
