@@ -2,7 +2,6 @@ package com.hkurokawa.qiitandroid.domain.repository;
 
 import com.hkurokawa.qiitandroid.domain.article.Author;
 import com.hkurokawa.qiitandroid.domain.article.UnbiasedArticle;
-import com.hkurokawa.qiitandroid.domain.user.User;
 import com.hkurokawa.qiitandroid.network.QiitaApi;
 import com.hkurokawa.qiitandroid.network.QiitaApiV1;
 
