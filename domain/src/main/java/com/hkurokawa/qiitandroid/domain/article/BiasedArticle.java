@@ -11,8 +11,9 @@ import java.util.Date;
 public class BiasedArticle extends Article {
     private boolean stocked;
 
-    public BiasedArticle(long id, User user, String title, Date createdAt, String createdAtInWords, String url, String body) {
-        super(id, user, title, createdAt, createdAtInWords, url, body);
+    public BiasedArticle(long id, Author author, String title, Date createdAt, String createdAtInWords, String url, String body, boolean stocked) {
+        super(id, author, title, createdAt, createdAtInWords, url, body);
+        this.stocked = stocked;
     }
 
     public boolean isStocked() {
