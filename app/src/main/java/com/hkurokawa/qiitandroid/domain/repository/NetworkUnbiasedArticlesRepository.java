@@ -1,5 +1,6 @@
 package com.hkurokawa.qiitandroid.domain.repository;
 
+import com.hkurokawa.qiitandroid.domain.article.Author;
 import com.hkurokawa.qiitandroid.domain.article.UnbiasedArticle;
 import com.hkurokawa.qiitandroid.domain.user.User;
 import com.hkurokawa.qiitandroid.network.QiitaApi;
@@ -33,7 +34,7 @@ public class NetworkUnbiasedArticlesRepository implements ArticlesRepository<Unb
         return new UnbiasedArticle(a.getId(), convertToDomainModel(a.getUser()), a.getTitle(), a.getCreatedAt(), a.getCreatedAtInWords(), a.getUrl(), a.getBody());
     }
 
-    private static User convertToDomainModel(com.hkurokawa.qiitandroid.network.User u) {
-        return new User(u.getUrlName(), u.getProfileImageUrl());
+    private static Author convertToDomainModel(com.hkurokawa.qiitandroid.network.User u) {
+        return new Author(u.getUrlName(), u.getProfileImageUrl());
     }
 }

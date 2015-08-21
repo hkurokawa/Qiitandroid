@@ -10,16 +10,16 @@ import java.util.Date;
 
 public abstract class Article {
     private final long id;
-    private final User user;
+    private final Author author;
     private final String title;
     private final Date createdAt;
     private final String createdAtInWords;
     private final String url;
     private final String body;
 
-    public Article(long id, User user, String title, Date createdAt, String createdAtInWords, String url, String body) {
+    public Article(long id, Author author, String title, Date createdAt, String createdAtInWords, String url, String body) {
         this.id = id;
-        this.user = user;
+        this.author = author;
         this.title = title;
         this.createdAt = createdAt;
         this.createdAtInWords = createdAtInWords;
@@ -31,8 +31,8 @@ public abstract class Article {
         return id;
     }
 
-    public User getUser() {
-        return user;
+    public Author getAuthor() {
+        return author;
     }
 
     public String getTitle() {
