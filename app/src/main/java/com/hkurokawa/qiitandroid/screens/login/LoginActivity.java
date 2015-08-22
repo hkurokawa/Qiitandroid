@@ -7,6 +7,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.ProgressBar;
 
+import com.hkurokawa.qiitandroid.QiitaApplication;
 import com.hkurokawa.qiitandroid.R;
 import com.hkurokawa.qiitandroid.network.AuthToken;
 
@@ -43,6 +44,7 @@ public class LoginActivity extends AppCompatActivity implements LoginScreen, OAu
 
         if (presenter == null) {
             presenter = new LoginPresenter(
+                    ((QiitaApplication)this.getApplication()).getApp(),
                     this.getString(R.string.qiita_client_id),
                     this.getString(R.string.qiita_client_secret),
                     EnumSet.of(AuthToken.Scope.READ_QIITA, AuthToken.Scope.READ_QIITA_TEAM),

@@ -9,9 +9,10 @@ public class User {
     private final String profileImageUrl;
     private String token;
 
-    public User(String name, String profileImageUrl) {
+    public User(String name, String profileImageUrl, String token) {
         this.name = name;
         this.profileImageUrl = profileImageUrl;
+        this.token = token;
     }
 
     public String getName() {
