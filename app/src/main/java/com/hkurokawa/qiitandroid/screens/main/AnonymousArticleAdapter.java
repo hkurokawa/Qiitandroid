@@ -5,20 +5,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.hkurokawa.qiitandroid.domain.article.Article;
-import com.hkurokawa.qiitandroid.databinding.ItemArticleBinding;
+import com.hkurokawa.qiitandroid.databinding.ItemAnonymousArticleBinding;
+import com.hkurokawa.qiitandroid.domain.article.AnonymousArticle;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * An ArrayAdapter to display a list of {@link Article}s.
+ * An ArrayAdapter to display a list of {@link AnonymousArticle}s.
  * Created by hiroshi on 2015/06/10.
  */
-public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHolder> {
+public class AnonymousArticleAdapter extends RecyclerView.Adapter<AnonymousArticleAdapter.ViewHolder> {
     private static final int VIEW_TYPE_FOOTER = 0;
     private static final int VIEW_TYPE_ITEM = 1;
-    private List<Article> articles = new ArrayList<>();
+    private List<AnonymousArticle> articles = new ArrayList<>();
     private View footerView;
     private OnItemClickListener listener;
 
@@ -37,7 +37,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
             case VIEW_TYPE_FOOTER:
                 return new FooterViewHolder(this.footerView);
             case VIEW_TYPE_ITEM:
-                final ItemArticleBinding binding = ItemArticleBinding.inflate(inflater);
+                final ItemAnonymousArticleBinding binding = ItemAnonymousArticleBinding.inflate(inflater);
                 return new ItemViewHolder(binding);
             default:
                 throw new IllegalArgumentException("Invalid view type: " + viewType);
@@ -47,15 +47,12 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
         if (holder instanceof ItemViewHolder) {
-            final Article a = this.articles.get(position);
+            final AnonymousArticle a = this.articles.get(position);
             final ItemViewHolder h = ((ItemViewHolder) holder);
             h.binding.setArticle(a);
-            h.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (ArticleAdapter.this.listener != null) {
-                        ArticleAdapter.this.listener.onItemClick(a, position);
-                    }
+            h.setOnClickListener(v -> {
+                if (AnonymousArticleAdapter.this.listener != null) {
+                    AnonymousArticleAdapter.this.listener.onItemClick(a, position);
                 }
             });
         }
@@ -75,7 +72,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
         }
     }
 
-    public void set(List<Article> articles) {
+    public void set(List<AnonymousArticle> articles) {
         this.articles = articles;
     }
 
@@ -88,7 +85,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
     }
 
     public interface OnItemClickListener {
-        void onItemClick(Article article, int position);
+        void onItemClick(AnonymousArticle article, int position);
     }
 
     public abstract static class ViewHolder extends RecyclerView.ViewHolder {
@@ -98,9 +95,9 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.ViewHold
     }
 
     private static class ItemViewHolder extends ViewHolder {
-        private ItemArticleBinding binding;
+        private ItemAnonymousArticleBinding binding;
 
-        public ItemViewHolder(ItemArticleBinding binding) {
+        public ItemViewHolder(ItemAnonymousArticleBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
         }

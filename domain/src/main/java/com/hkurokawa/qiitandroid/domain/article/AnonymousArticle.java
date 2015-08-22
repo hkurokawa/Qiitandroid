@@ -1,14 +1,13 @@
 package com.hkurokawa.qiitandroid.domain.article;
 
 /**
+ * Aspects of an article from anonymous user's point of view.
  * Created by hiroshi on 8/21/15.
  */
 
-import com.hkurokawa.qiitandroid.domain.user.User;
-
 import java.util.Date;
 
-public abstract class Article {
+public class AnonymousArticle {
     private final long id;
     private final Author author;
     private final String title;
@@ -17,7 +16,7 @@ public abstract class Article {
     private final String url;
     private final String body;
 
-    public Article(long id, Author author, String title, Date createdAt, String createdAtInWords, String url, String body) {
+    public AnonymousArticle(long id, Author author, String title, Date createdAt, String createdAtInWords, String url, String body) {
         this.id = id;
         this.author = author;
         this.title = title;

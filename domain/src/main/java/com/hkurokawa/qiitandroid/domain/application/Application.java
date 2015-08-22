@@ -1,6 +1,7 @@
 package com.hkurokawa.qiitandroid.domain.application;
 
-import com.hkurokawa.qiitandroid.domain.article.Board;
+import com.hkurokawa.qiitandroid.domain.board.Board;
+import com.hkurokawa.qiitandroid.domain.team.Team;
 import com.hkurokawa.qiitandroid.domain.user.User;
 
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.List;
  */
 public class Application {
     private User user;
-    private List<Board<?>> boards;
+    private Team team;
 
     public boolean isAnonymous() {
         return this.user == null;
@@ -26,10 +27,6 @@ public class Application {
     }
 
     public List<Board<?>> getBoards() {
-        return boards;
-    }
-
-    public void setBoards(List<Board<?>> boards) {
-        this.boards = boards;
+        return this.team.getBoards();
     }
 }

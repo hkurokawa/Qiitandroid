@@ -10,17 +10,9 @@ import android.view.MenuItem;
 import android.widget.ViewAnimator;
 
 import com.hkurokawa.qiitandroid.R;
-import com.hkurokawa.qiitandroid.domain.article.Article;
-import com.hkurokawa.qiitandroid.domain.article.ArticlesRepositoryFactory;
-import com.hkurokawa.qiitandroid.domain.article.BiasedArticle;
-import com.hkurokawa.qiitandroid.domain.article.UnbiasedArticle;
-import com.hkurokawa.qiitandroid.domain.repository.ArticlesRepository;
-import com.hkurokawa.qiitandroid.domain.repository.NetworkBiasedArticlesRepository;
-import com.hkurokawa.qiitandroid.domain.repository.NetworkUnbiasedArticlesRepository;
+import com.hkurokawa.qiitandroid.domain.article.AnonymousArticle;
 import com.hkurokawa.qiitandroid.screens.ActivityRouter;
 import com.hkurokawa.qiitandroid.views.DividerItemDecoration;
-
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -29,12 +21,12 @@ import butterknife.InjectView;
 import rx.Observable;
 import timber.log.Timber;
 
-public class MainActivity extends AppCompatActivity implements ArticleAdapter.OnItemClickListener, LatestArticlesScreen {
-    private ArticleAdapter adapter;
+public class MainActivity extends AppCompatActivity implements AnonymousArticleAdapter.OnItemClickListener, AnonymousArticlesScreen {
+    private AnonymousArticleAdapter adapter;
     @InjectView(R.id.list)
     RecyclerView listView;
     private ViewAnimator footerView;
-    private LatestArticlesPresenter presenter;
+    private AnonymousArticlesPresenter presenter;
     private Observable<Void> bottomHitObservable;
 
     @Override
@@ -51,25 +43,14 @@ public class MainActivity extends AppCompatActivity implements ArticleAdapter.On
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         this.listView.setLayoutManager(layoutManager);
 
-        this.adapter = new ArticleAdapter();
+        this.adapter = new AnonymousArticleAdapter();
         this.adapter.setOnItemClickListener(this);
         this.footerView = (ViewAnimator) LayoutInflater.from(this).inflate(R.layout.item_footer, this.listView, false);
         this.adapter.setFooterView(this.footerView);
         this.listView.setAdapter(this.adapter);
         this.bottomHitObservable = createBottomHitObservable(this.listView, layoutManager);
 
-        this.presenter = new LatestArticlesPresenter(new ActivityRouter(), new ArticlesRepositoryFactory() {
-            @Override
-            public <T extends Article> ArticlesRepository<T> create(@Nullable String teamId, @Nullable String userToken, Class<T> clazz) {
-                if (clazz == UnbiasedArticle.class) {
-                    return (ArticlesRepository<T>) new NetworkUnbiasedArticlesRepository();
-                } else if (clazz == BiasedArticle.class) {
-                    return (ArticlesRepository<T>) new NetworkBiasedArticlesRepository();
-                } else {
-                    throw new IllegalArgumentException("Unknown Article class type: " + clazz);
-                }
-            }
-        });
+        this.presenter = new AnonymousArticlesPresenter(new ActivityRouter());
         this.presenter.takeView(this);
     }
 
@@ -102,12 +83,12 @@ public class MainActivity extends AppCompatActivity implements ArticleAdapter.On
     }
 
     @Override
-    public void onItemClick(Article article, int position) {
+    public void onItemClick(AnonymousArticle article, int position) {
         this.presenter.onItemClick(article, position);
     }
 
     @Override
-    public void publish(List<Article> articles) {
+    public void publish(List<AnonymousArticle> articles) {
         this.adapter.set(articles);
         this.adapter.notifyDataSetChanged();
     }
