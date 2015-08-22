@@ -27,7 +27,7 @@
                 android:layout_alignParentTop="true"
                 android:layout_marginRight="16dp"
                 app:error="@{@drawable/ic_error_outline_black_24dp}"
-                app:imageUrl="@{article.user.profileImageUrl}"
+                app:imageUrl="@{article.author.profileImageUrl}"
                 tools:src="@drawable/ic_error_outline_black_24dp" />
 
             <TextView
@@ -50,7 +50,7 @@
                 android:layout_toRightOf="@id/user_icon"
                 android:ellipsize="end"
                 android:lines="1"
-                android:text='@{article.user.name + " が" + article.createdAtInWords + "前に投稿しました"}'
+                android:text='@{article.author.name + " が" + article.createdAtInWords + "前に投稿しました"}'
                 android:textSize="13sp"
                 tools:text="pugiemonn が3分前に投稿しました" />
         </RelativeLayout>
