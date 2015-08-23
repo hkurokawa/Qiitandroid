@@ -15,7 +15,8 @@ import com.hkurokawa.qiitandroid.screens.board.ViewHolder;
 public class PerceivedArticleAdapter extends BoardListAdapter<PerceivedArticle> {
     @Override
     protected ViewHolder.ItemViewHolder createItemViewHolder(LayoutInflater inflater) {
-        return null;
+        ItemPerceivedArticleBinding binding = ItemPerceivedArticleBinding.inflate(inflater);
+        return new PerceivedArticleViewHolder(binding);
     }
 
     private static class PerceivedArticleViewHolder extends ViewHolder.ItemViewHolder<PerceivedArticle> {
