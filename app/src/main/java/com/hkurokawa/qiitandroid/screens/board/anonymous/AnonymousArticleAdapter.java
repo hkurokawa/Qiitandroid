@@ -1,4 +1,4 @@
-package com.hkurokawa.qiitandroid.screens.main;
+package com.hkurokawa.qiitandroid.screens.board.anonymous;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * An ArrayAdapter to display a list of {@link AnonymousArticle}s.
+ * An Adapter to display a list of {@link AnonymousArticle}s.
  * Created by hiroshi on 2015/06/10.
  */
 public class AnonymousArticleAdapter extends RecyclerView.Adapter<AnonymousArticleAdapter.ViewHolder> {

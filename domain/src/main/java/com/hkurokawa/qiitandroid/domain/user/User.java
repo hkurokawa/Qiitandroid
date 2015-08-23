@@ -1,5 +1,10 @@
 package com.hkurokawa.qiitandroid.domain.user;
 
+import com.hkurokawa.qiitandroid.domain.team.Team;
+
+import java.util.Collection;
+import java.util.List;
+
 /**
  * Entity to represents a user.
  * Created by hiroshi on 8/16/15.
@@ -29,5 +34,10 @@ public class User {
 
     public String getToken() {
         return token;
+    }
+
+    public List<String> getAvailableTeams() {
+        // FIXME
+        return null;
     }
 }

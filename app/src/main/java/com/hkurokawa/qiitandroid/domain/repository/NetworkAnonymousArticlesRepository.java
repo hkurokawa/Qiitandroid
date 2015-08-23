@@ -9,10 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Implementation of {@link Repository}.
+ * Implementation of {@link ListItemRepository}.
  * Created by hiroshi on 8/16/15.
  */
-public class NetworkAnonymousArticlesRepository implements Repository<AnonymousArticle> {
+public class NetworkAnonymousArticlesRepository implements ListItemRepository<AnonymousArticle> {
     private QiitaApiV1 api;
 
     public NetworkAnonymousArticlesRepository() {

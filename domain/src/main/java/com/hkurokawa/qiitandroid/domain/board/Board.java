@@ -1,6 +1,6 @@
 package com.hkurokawa.qiitandroid.domain.board;
 
-import com.hkurokawa.qiitandroid.domain.repository.Repository;
+import com.hkurokawa.qiitandroid.domain.repository.ListItemRepository;
 
 import java.util.List;
 
@@ -9,18 +9,18 @@ import rx.Observer;
 import rx.schedulers.NewThreadScheduler;
 
 /**
- * Entity to represent a collection of entities.
+ * Entity to represent a collection of items.
  * Created by hiroshi on 8/21/15.
  */
 public abstract class Board<T> {
     /**
-     * Returns an observable with which an emit of a list of entities can be observed.
-     * The observable must returns a list of entities of type <code>T</code> on {@link Observer#onNext(Object)} while
-     * there are any entities to list and must call {@link Observer#onCompleted()} when there is sno more
-     * entities to show.
+     * Returns an observable with which an emit of a list of items can be observed.
+     * The observable must returns a list of items of type <code>T</code> on {@link Observer#onNext(Object)} while
+     * there are any items to list and must call {@link Observer#onCompleted()} when there is sno more
+     * items to show.
      *
-     * @param trigger an {@link Observable} to trigger the loading of the next list of entities to return.
-     * @return an {@link Observable} to observe emits of a list of entities.
+     * @param trigger an {@link Observable} to trigger the loading of the next list of items to return.
+     * @return an {@link Observable} to observe emits of a list of items.
      */
     public Observable<List<T>> list(final Observable<Void> trigger) {
         return Observable.create(subscriber -> {
@@ -55,5 +55,7 @@ public abstract class Board<T> {
         );
     }
 
-    protected abstract Repository<T> getRepository();
+    public abstract Class<T> getItemClass();
+
+    protected abstract ListItemRepository<T> getRepository();
 }

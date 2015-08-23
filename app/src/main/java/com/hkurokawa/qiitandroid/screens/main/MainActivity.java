@@ -2,32 +2,27 @@ package com.hkurokawa.qiitandroid.screens.main;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ViewAnimator;
+import android.view.View;
+import android.view.ViewGroup;
 
+import com.hkurokawa.qiitandroid.QiitaApplication;
 import com.hkurokawa.qiitandroid.R;
 import com.hkurokawa.qiitandroid.domain.article.AnonymousArticle;
+import com.hkurokawa.qiitandroid.domain.board.Board;
+import com.hkurokawa.qiitandroid.domain.deck.Deck;
+import com.hkurokawa.qiitandroid.domain.team.Team;
 import com.hkurokawa.qiitandroid.screens.ActivityRouter;
-import com.hkurokawa.qiitandroid.views.DividerItemDecoration;
+import com.hkurokawa.qiitandroid.screens.Router;
+import com.hkurokawa.qiitandroid.screens.board.anonymous.AnonymousBoardView;
 
-import java.util.List;
-
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-import rx.Observable;
 import timber.log.Timber;
 
-public class MainActivity extends AppCompatActivity implements AnonymousArticleAdapter.OnItemClickListener, AnonymousArticlesScreen {
-    private AnonymousArticleAdapter adapter;
-    @InjectView(R.id.list)
-    RecyclerView listView;
-    private ViewAnimator footerView;
-    private AnonymousArticlesPresenter presenter;
-    private Observable<Void> bottomHitObservable;
+public class MainActivity extends AppCompatActivity implements MainScreen {
+    private MainPresenter mainPresenter;
+    private Router router;
+    private ViewGroup root;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,28 +30,10 @@ public class MainActivity extends AppCompatActivity implements AnonymousArticleA
         Timber.plant(new Timber.DebugTree());
         this.setContentView(R.layout.activity_main);
 
-        ButterKnife.inject(this);
-
-        this.listView.setHasFixedSize(true);
-        this.listView.addItemDecoration(new DividerItemDecoration(this));
-
-        final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        this.listView.setLayoutManager(layoutManager);
-
-        this.adapter = new AnonymousArticleAdapter();
-        this.adapter.setOnItemClickListener(this);
-        this.footerView = (ViewAnimator) LayoutInflater.from(this).inflate(R.layout.item_footer, this.listView, false);
-        this.adapter.setFooterView(this.footerView);
-        this.listView.setAdapter(this.adapter);
-        this.bottomHitObservable = createBottomHitObservable(this.listView, layoutManager);
-
-        this.presenter = new AnonymousArticlesPresenter(new ActivityRouter());
-        this.presenter.takeView(this);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
+        this.root = (ViewGroup) this.findViewById(R.id.content);
+        this.router = new ActivityRouter();
+        this.mainPresenter = new MainPresenter(((QiitaApplication)this.getApplication()).getApp(), this.router);
+        this.mainPresenter.takeView(this);
     }
 
     @Override
@@ -75,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements AnonymousArticleA
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            this.presenter.onLoginMenuClick();
+            this.mainPresenter.onLoginRequested();
             return true;
         }
 
@@ -83,49 +60,20 @@ public class MainActivity extends AppCompatActivity implements AnonymousArticleA
     }
 
     @Override
-    public void onItemClick(AnonymousArticle article, int position) {
-        this.presenter.onItemClick(article, position);
+    public void publish(Deck deck) {
+        final Team team = deck.getCurrentTeam();
+        final Board board = team.getBoards().get(0);
+        if (board.getItemClass() == AnonymousArticle.class) {
+            final AnonymousBoardView view = new AnonymousBoardView(this);
+            this.replaceView(view);
+            view.setBoard(board, this.router);
+        } else {
+            throw new IllegalArgumentException("Unknown item class type: " + board.getItemClass());
+        }
     }
 
-    @Override
-    public void publish(List<AnonymousArticle> articles) {
-        this.adapter.set(articles);
-        this.adapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public Observable<Void> getBottomHitObservable() {
-        return this.bottomHitObservable;
-    }
-
-    @Override
-    public void dismissBottomProgressBar() {
-        this.footerView.setDisplayedChild(1);
-    }
-
-    @Override
-    public void logErr(Throwable e, String msg) {
-        Timber.e(e, msg);
-    }
-
-    private static Observable<Void> createBottomHitObservable(final RecyclerView lv, final LinearLayoutManager layoutManager) {
-        return Observable.create(subscriber ->
-                lv.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                    boolean onBottom;
-
-                    @Override
-                    public void onScrolled(RecyclerView view, int dx, int dy) {
-                        int totalItemCount = layoutManager.getItemCount();
-                        int visibleItemCount = layoutManager.getChildCount();
-                        int pastItemCount = layoutManager.findFirstVisibleItemPosition();
-
-                        final boolean isBottom = pastItemCount + visibleItemCount >= totalItemCount;
-                        if (!subscriber.isUnsubscribed() && (!this.onBottom && isBottom)) {
-                            Timber.d("Emitting an onBottom event.");
-                            subscriber.onNext((Void)null);
-                        }
-                        this.onBottom = isBottom;
-                    }
-                }));
+    private void replaceView(View view) {
+        this.root.removeAllViews();
+        this.root.addView(view);
     }
 }
