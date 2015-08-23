@@ -12,12 +12,14 @@ import android.view.ViewGroup;
 import com.hkurokawa.qiitandroid.QiitaApplication;
 import com.hkurokawa.qiitandroid.R;
 import com.hkurokawa.qiitandroid.domain.article.AnonymousArticle;
+import com.hkurokawa.qiitandroid.domain.article.PerceivedArticle;
 import com.hkurokawa.qiitandroid.domain.board.Board;
 import com.hkurokawa.qiitandroid.domain.deck.Deck;
 import com.hkurokawa.qiitandroid.domain.team.Team;
 import com.hkurokawa.qiitandroid.screens.ActivityRouter;
 import com.hkurokawa.qiitandroid.screens.Router;
 import com.hkurokawa.qiitandroid.screens.board.anonymous.AnonymousBoardView;
+import com.hkurokawa.qiitandroid.screens.board.perceived.PerceivedBoardView;
 import com.hkurokawa.qiitandroid.screens.login.LoginActivity;
 
 import timber.log.Timber;
@@ -79,6 +81,10 @@ public class MainActivity extends AppCompatActivity implements MainScreen {
         final Board board = team.getBoards().get(0);
         if (board.getItemClass() == AnonymousArticle.class) {
             final AnonymousBoardView view = new AnonymousBoardView(this);
+            this.replaceView(view);
+            view.setBoard(board);
+        } else if (board.getItemClass() == PerceivedArticle.class) {
+            final PerceivedBoardView view = new PerceivedBoardView(this);
             this.replaceView(view);
             view.setBoard(board);
         } else {
