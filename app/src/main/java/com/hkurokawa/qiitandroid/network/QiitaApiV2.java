@@ -1,5 +1,7 @@
 package com.hkurokawa.qiitandroid.network;
 
+import java.util.List;
+
 import retrofit.http.Body;
 import retrofit.http.GET;
 import retrofit.http.Header;
@@ -16,4 +18,7 @@ public interface QiitaApiV2 {
 
     @GET("/api/v2/authenticated_user")
     User authenticatedUser(@Header("Authorization") String authToken);
+
+    @GET("/api/v2/teams")
+    List<Team> availableTeams(@Header("Authorization") String authToken);
 }

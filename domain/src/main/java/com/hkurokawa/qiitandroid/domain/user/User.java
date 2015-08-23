@@ -2,6 +2,7 @@ package com.hkurokawa.qiitandroid.domain.user;
 
 import com.hkurokawa.qiitandroid.domain.team.Team;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -12,12 +13,14 @@ import java.util.List;
 public class User {
     private final String name;
     private final String profileImageUrl;
+    private final List<Team> availableTeams;
     private String token;
 
     public User(String name, String profileImageUrl, String token) {
         this.name = name;
         this.profileImageUrl = profileImageUrl;
         this.token = token;
+        this.availableTeams = new ArrayList<Team>();
     }
 
     public String getName() {
@@ -36,8 +39,15 @@ public class User {
         return token;
     }
 
-    public List<String> getAvailableTeams() {
-        // FIXME
-        return null;
+    public void setTeams(List<Team> teams) {
+        for (Team t : teams) {
+            if (t.isActive()) {
+                this.availableTeams.add(t);
+            }
+        }
+    }
+
+    public List<Team> getAvailableTeams() {
+        return this.availableTeams;
     }
 }

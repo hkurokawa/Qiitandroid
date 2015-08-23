@@ -6,6 +6,7 @@ import com.hkurokawa.qiitandroid.network.AccessTokensRequest;
 import com.hkurokawa.qiitandroid.network.AuthToken;
 import com.hkurokawa.qiitandroid.network.QiitaApi;
 import com.hkurokawa.qiitandroid.network.QiitaApiV2;
+import com.hkurokawa.qiitandroid.network.Team;
 import com.hkurokawa.qiitandroid.screens.Presenter;
 
 import java.io.UnsupportedEncodingException;
@@ -13,8 +14,10 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
@@ -117,16 +120,21 @@ public class LoginPresenter extends Presenter {
             @Override
             public void accept(Observer<? super User> observer) {
                 final String token;
-                final com.hkurokawa.qiitandroid.network.User user;
                 try {
                     final AuthToken authToken = api.accessTokens(request);
                     token = authToken.getToken();
                     // TODO should use Android independent logger
                     System.out.println("token = [" + token + "].");
-                    user = api.authenticatedUser("Bearer " + token);
-                    observer.onNext(new User(user.getUrlName(), user.getProfileImageUrl(), token));
+                    final String authHeader = "Bearer " + token;
+                    final com.hkurokawa.qiitandroid.network.User apiUser = api.authenticatedUser(authHeader);
+                    final User user = new User(apiUser.getUrlName(), apiUser.getProfileImageUrl(), token);
+                    final List<Team> teams =  api.availableTeams(authHeader);
+                    user.setTeams(convertNetworkToDomain(teams));
+                    observer.onNext(user);
+                    LoginPresenter.this.screen.setResult(true);
                 } catch (Exception e) {
                     observer.onError(e);
+                    LoginPresenter.this.screen.setResult(false);
                     //TODO show an alert message to user
                     observer.onCompleted();
                 } finally {
@@ -134,6 +142,18 @@ public class LoginPresenter extends Presenter {
                 }
             }
         }).subscribeOn(new NewThreadScheduler()).subscribe(LoginPresenter.this.app::setUser, throwable -> System.err.println("Failed to authenticate the user: " + throwable.getMessage()), this::close);
+    }
+
+    private List<com.hkurokawa.qiitandroid.domain.team.Team> convertNetworkToDomain(List<Team> teams) {
+        final List<com.hkurokawa.qiitandroid.domain.team.Team> ret = new ArrayList<>();
+        for (Team t : teams) {
+            ret.add(convertNetworkToDomain(t));
+        }
+        return ret;
+    }
+
+    private com.hkurokawa.qiitandroid.domain.team.Team convertNetworkToDomain(Team t) {
+        return new com.hkurokawa.qiitandroid.domain.team.Team(t.getId(), t.getName(), t.isActive());
     }
 
     private void close() {

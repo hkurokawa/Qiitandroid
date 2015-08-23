@@ -7,6 +7,8 @@ import android.content.Intent;
 import com.hkurokawa.qiitandroid.screens.aritcleview.ArticleViewActivity;
 import com.hkurokawa.qiitandroid.screens.login.LoginActivity;
 
+import rx.Observable;
+
 /**
  * A router from activity to activity.
  * Created by hiroshi on 15/08/19.
@@ -20,13 +22,6 @@ public class ActivityRouter implements Router {
         intent.putExtra(ArticleViewActivity.INTENT_KEY_TITLE, title);
         intent.putExtra(ArticleViewActivity.INTENT_KEY_CONTENT, content);
         context.startActivity(intent);
-    }
-
-    @Override
-    public void toLoginScreen(Screen src) {
-        ensureIsActivity(src);
-        final Context context = (Context) src;
-        context.startActivity(new Intent(context, LoginActivity.class));
     }
 
     private static void ensureIsActivity(Screen screen) {

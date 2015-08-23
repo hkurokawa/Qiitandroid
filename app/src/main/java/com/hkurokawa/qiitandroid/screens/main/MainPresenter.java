@@ -11,21 +11,29 @@ import com.hkurokawa.qiitandroid.screens.Router;
  */
 public class MainPresenter extends Presenter {
     private final Application app;
-    private final Router router;
     private MainScreen screen;
 
-    public MainPresenter(Application app, Router router) {
+    public MainPresenter(Application app) {
         this.app = app;
-        this.router = router;
     }
 
     public void takeView(MainScreen screen) {
-        final Deck deck = this.app.getDeck();
         this.screen = screen;
-        this.screen.publish(deck);
+        this.refresh();
     }
 
     public void onLoginRequested() {
-        this.router.toLoginScreen(this.screen);
+        this.screen.moveToLoginScreen();
+    }
+
+    public void onLoginFinished(boolean success) {
+        if (success) {
+            this.refresh();
+        }
+    }
+
+    private void refresh() {
+        final Deck deck = this.app.getDeck();
+        this.screen.publish(deck);
     }
 }

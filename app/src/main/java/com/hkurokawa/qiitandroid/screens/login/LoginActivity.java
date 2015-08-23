@@ -75,6 +75,11 @@ public class LoginActivity extends AppCompatActivity implements LoginScreen, OAu
     }
 
     @Override
+    public void setResult(boolean success) {
+        this.setResult(success ? RESULT_OK : RESULT_CANCELED);
+    }
+
+    @Override
     public void loadRequestUrl(String url) {
         this.webView.loadUrl(url);
     }

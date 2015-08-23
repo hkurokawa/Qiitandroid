@@ -48,9 +48,7 @@ public class Application {
             final Team t = Team.getDefaultPerceived(this.pRepository);
             final List<Team> teams = new ArrayList<Team>();
             teams.add(t);
-            for (String id : user.getAvailableTeams()) {
-                // FIXME
-            }
+            teams.addAll(user.getAvailableTeams());
             this.deck = new Deck(teams);
         }
     }

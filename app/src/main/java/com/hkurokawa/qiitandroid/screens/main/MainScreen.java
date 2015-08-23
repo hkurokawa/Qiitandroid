@@ -9,4 +9,5 @@ import com.hkurokawa.qiitandroid.screens.Screen;
  */
 public interface MainScreen extends Screen {
     void publish(Deck deck);
+    void moveToLoginScreen();
 }

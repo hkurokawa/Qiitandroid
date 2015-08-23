@@ -1,5 +1,7 @@
 package com.hkurokawa.qiitandroid.screens.main;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -16,11 +18,13 @@ import com.hkurokawa.qiitandroid.domain.team.Team;
 import com.hkurokawa.qiitandroid.screens.ActivityRouter;
 import com.hkurokawa.qiitandroid.screens.Router;
 import com.hkurokawa.qiitandroid.screens.board.anonymous.AnonymousBoardView;
+import com.hkurokawa.qiitandroid.screens.login.LoginActivity;
 
 import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity implements MainScreen {
-    private MainPresenter mainPresenter;
+    private static final int REQ_LOGIN = 10;
+    private MainPresenter presenter;
     private Router router;
     private ViewGroup root;
 
@@ -32,8 +36,8 @@ public class MainActivity extends AppCompatActivity implements MainScreen {
 
         this.root = (ViewGroup) this.findViewById(R.id.content);
         this.router = new ActivityRouter();
-        this.mainPresenter = new MainPresenter(((QiitaApplication)this.getApplication()).getApp(), this.router);
-        this.mainPresenter.takeView(this);
+        this.presenter = new MainPresenter(((QiitaApplication)this.getApplication()).getApp());
+        this.presenter.takeView(this);
     }
 
     @Override
@@ -52,11 +56,21 @@ public class MainActivity extends AppCompatActivity implements MainScreen {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            this.mainPresenter.onLoginRequested();
+            this.presenter.onLoginRequested();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case REQ_LOGIN:
+                this.presenter.onLoginFinished(resultCode == Activity.RESULT_OK);
+                return;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -70,6 +84,11 @@ public class MainActivity extends AppCompatActivity implements MainScreen {
         } else {
             throw new IllegalArgumentException("Unknown item class type: " + board.getItemClass());
         }
+    }
+
+    @Override
+    public void moveToLoginScreen() {
+        this.startActivityForResult(new Intent(this, LoginActivity.class), REQ_LOGIN);
     }
 
     private void replaceView(View view) {
