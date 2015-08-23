@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="article"
+            type="com.hkurokawa.qiitandroid.domain.article.PerceivedArticle" />
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/list_item_height"
+            android:paddingTop="8dp">
+
+            <ImageView
+                android:id="@+id/user_icon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginRight="16dp"
+                app:error="@{@drawable/ic_error_outline_black_24dp}"
+                app:imageUrl="@{article.author.profileImageUrl}"
+                tools:src="@drawable/ic_error_outline_black_24dp" />
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_toRightOf="@id/user_icon"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:text="@{article.title}"
+                android:textSize="17sp"
+                tools:text="perlのコマンドでファイル内の文字列を一括置換しました。" />
+
+            <TextView
+                android:id="@+id/info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/title"
+                android:layout_toRightOf="@id/user_icon"
+                android:ellipsize="end"
+                android:lines="1"
+                android:text='@{article.author.name + " が" + article.createdAtInWords + "前に投稿しました"}'
+                android:textSize="13sp"
+                tools:text="pugiemonn が3分前に投稿しました" />
+        </RelativeLayout>
+    </FrameLayout>
+</layout>

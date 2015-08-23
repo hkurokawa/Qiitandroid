@@ -7,7 +7,7 @@ package com.hkurokawa.qiitandroid.domain.article;
 
 import java.util.Date;
 
-public class AnonymousArticle {
+public class AnonymousArticle implements ListItem {
     private final long id;
     private final Author author;
     private final String title;
@@ -26,6 +26,7 @@ public class AnonymousArticle {
         this.body = body;
     }
 
+    @Override
     public long getId() {
         return id;
     }

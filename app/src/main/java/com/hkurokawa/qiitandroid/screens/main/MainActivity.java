@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements MainScreen {
         if (board.getItemClass() == AnonymousArticle.class) {
             final AnonymousBoardView view = new AnonymousBoardView(this);
             this.replaceView(view);
-            view.setBoard(board, this.router);
+            view.setBoard(board);
         } else {
             throw new IllegalArgumentException("Unknown item class type: " + board.getItemClass());
         }
