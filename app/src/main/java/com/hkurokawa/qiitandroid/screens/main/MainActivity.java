@@ -3,11 +3,12 @@ package com.hkurokawa.qiitandroid.screens.main;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import com.hkurokawa.qiitandroid.QiitaApplication;
 import com.hkurokawa.qiitandroid.R;
@@ -22,47 +23,31 @@ import com.hkurokawa.qiitandroid.screens.board.anonymous.AnonymousBoardView;
 import com.hkurokawa.qiitandroid.screens.board.perceived.PerceivedBoardView;
 import com.hkurokawa.qiitandroid.screens.login.LoginActivity;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnItemClick;
 import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity implements MainScreen {
     private static final int REQ_LOGIN = 10;
     private MainPresenter presenter;
-    private Router router;
-    private ViewGroup root;
+    @InjectView(R.id.content)
+    ViewGroup root;
+    @InjectView(R.id.drawer_layout)
+    DrawerLayout drawerLayout;
+    @InjectView(R.id.left_drawer)
+    ListView drawerList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Timber.plant(new Timber.DebugTree());
         this.setContentView(R.layout.activity_main);
+        ButterKnife.inject(this);
 
-        this.root = (ViewGroup) this.findViewById(R.id.content);
-        this.router = new ActivityRouter();
+        this.drawerList.setAdapter(new ArrayAdapter<>(this, R.layout.item_drawer_list, R.id.item_title, new String[]{"Login"}));
         this.presenter = new MainPresenter(((QiitaApplication)this.getApplication()).getApp());
         this.presenter.takeView(this);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        this.getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        final int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            this.presenter.onLoginRequested();
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -95,6 +80,17 @@ public class MainActivity extends AppCompatActivity implements MainScreen {
     @Override
     public void moveToLoginScreen() {
         this.startActivityForResult(new Intent(this, LoginActivity.class), REQ_LOGIN);
+    }
+
+    @OnItemClick(R.id.left_drawer)
+    @SuppressWarnings("unused")
+    void onClickDrawerItem(ListView list, View view, int pos, long id) {
+        switch (pos) {
+            case 0:
+                this.drawerList.setItemChecked(pos, true);
+                this.drawerLayout.closeDrawer(this.drawerList);
+                this.presenter.onLoginRequested();
+        }
     }
 
     private void replaceView(View view) {

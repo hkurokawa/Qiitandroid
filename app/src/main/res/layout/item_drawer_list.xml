@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/nav_drawer_list_item_height"
+    android:orientation="horizontal">
+
+    <TextView
+        android:textColor="#DEFFFFFF"
+        android:textSize="14sp"
+        android:id="@+id/item_title"
+        android:gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:text="Login"/>
+</LinearLayout>
